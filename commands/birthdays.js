@@ -8,7 +8,7 @@ module.exports = {
   description: "Get characters that has birthday today!",
   perms: [],
   timeout: 5000,
-  category: "Roleplay",
+  category: "Anime & Manga",
   execute: async function (message, args) {
     var query = `
     query($page: Int, $perPage: Int) {
