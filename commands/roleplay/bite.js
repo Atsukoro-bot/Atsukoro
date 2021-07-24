@@ -1,12 +1,12 @@
 const axios = require("axios");
 let { MessageEmbed } = require("discord.js");
 
-const { feed } = require("../data/apiLinks.json").roleplay.endpoints;
-const baseurl = require("../data/apiLinks.json").roleplay.baseUrl;
+const { bite } = require("../../data/apiLinks.json").roleplay.endpoints;
+const baseurl = require("../../data/apiLinks.json").roleplay.baseUrl;
 
 module.exports = {
-  name: "feed",
-  description: "Feed someone!",
+  name: "bite",
+  description: "Bite someone!",
   perms: [],
   timeout: 3000,
   category: "Roleplay",
@@ -16,17 +16,17 @@ module.exports = {
     if (message.mentions.users.first()) {
       messageAuthor =
         message.author.username +
-        " fed " +
+        " bited " +
         message.mentions.users.first().username +
         ".";
     } else {
-      messageAuthor = message.author.username + " fed himself/herself.";
+      messageAuthor = message.author.username + " bited himself/herself.";
     }
 
     axios
       .default({
         method: "GET",
-        url: baseurl + feed,
+        url: baseurl + bite,
       })
       .then((response) => {
         imageUrl = response.data.link;

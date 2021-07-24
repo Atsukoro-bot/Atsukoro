@@ -6,7 +6,7 @@ module.exports = {
   description: "Random anime quote",
   perms: [],
   timeout: 3000,
-  category: "Roleplay",
+  category: "Anime & Manga",
   execute: async function (message, args) {
     var quote = new Quotes();
     var get_quotes = await quote.quotes();

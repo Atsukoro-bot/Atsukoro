@@ -1,22 +1,32 @@
 const axios = require("axios");
 let { MessageEmbed } = require("discord.js");
 
-const { cry } = require("../data/apiLinks.json").roleplay.endpoints;
-const baseurl = require("../data/apiLinks.json").roleplay.baseUrl;
+const { poke } = require("../../data/apiLinks.json").roleplay.endpoints;
+const baseurl = require("../../data/apiLinks.json").roleplay.baseUrl;
 
 module.exports = {
-  name: "cry",
-  description: "Cry!",
+  name: "poke",
+  description: "Poke someone!",
   perms: [],
   timeout: 3000,
   category: "Roleplay",
   execute: async function (message, args) {
-    let messageAuthor = message.author.username + " started crying.";
+    let messageAuthor;
+
+    if (message.mentions.users.first()) {
+      messageAuthor =
+        message.author.username +
+        " poked " +
+        message.mentions.users.first().username +
+        ".";
+    } else {
+      messageAuthor = message.author.username + " poked himself/herself.";
+    }
 
     axios
       .default({
         method: "GET",
-        url: baseurl + cry,
+        url: baseurl + poke,
       })
       .then((response) => {
         imageUrl = response.data.link;

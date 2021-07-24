@@ -20,5 +20,21 @@
   },
   "anime": {
     "baseUrl": "https://graphql.anilist.co"
+  },
+  "nsfw": {
+    "baseUrl": "https://purrbot.site/api",
+    "endpoints": {
+      "neko": "/img/nsfw/neko/gif",
+      "anal": "/img/nsfw/anal/gif",
+      "bj": "/img/nsfw/blowjob/gif",
+      "cum": "/img/nsfw/cum/gif",
+      "fuck": "/img/nsfw/fuck/gif",
+      "pussylick": "/img/nsfw/pussylick/gif",
+      "solo": "/img/nsfw/solo/gif",
+      "yuri": "/img/nsfw/yuri/gif"
+    }
+  },
+  "image":{
+    "baseUrl":"https://nekobot.xyz/api/imagegen"
   }
 }

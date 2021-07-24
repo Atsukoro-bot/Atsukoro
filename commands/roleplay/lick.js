@@ -1,8 +1,8 @@
 const axios = require("axios");
 let { MessageEmbed } = require("discord.js");
 
-const { lick } = require("../data/apiLinks.json").roleplay.endpoints;
-const baseurl = require("../data/apiLinks.json").roleplay.baseUrl;
+const { lick } = require("../../data/apiLinks.json").roleplay.endpoints;
+const baseurl = require("../../data/apiLinks.json").roleplay.baseUrl;
 
 module.exports = {
   name: "lick",

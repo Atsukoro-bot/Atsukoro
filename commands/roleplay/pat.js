@@ -1,12 +1,12 @@
 const axios = require("axios");
 let { MessageEmbed } = require("discord.js");
 
-const { cuddle } = require("../data/apiLinks.json").roleplay.endpoints;
-const baseurl = require("../data/apiLinks.json").roleplay.baseUrl;
+const { pat } = require("../../data/apiLinks.json").roleplay.endpoints;
+const baseurl = require("../../data/apiLinks.json").roleplay.baseUrl;
 
 module.exports = {
-  name: "cuddle",
-  description: "Cuddle someone!",
+  name: "pat",
+  description: "Pat someone! uwu owo :3",
   perms: [],
   timeout: 3000,
   category: "Roleplay",
@@ -16,17 +16,16 @@ module.exports = {
     if (message.mentions.users.first()) {
       messageAuthor =
         message.author.username +
-        " cuddled " +
-        message.mentions.users.first().username +
-        ".";
+        " patted " +
+        message.mentions.users.first().username;
     } else {
-      messageAuthor = message.author.username + " cuddled himself/herself.";
+      messageAuthor = message.author.username + " patted himself/herself.";
     }
 
     axios
       .default({
         method: "GET",
-        url: baseurl + cuddle,
+        url: baseurl + pat,
       })
       .then((response) => {
         imageUrl = response.data.link;

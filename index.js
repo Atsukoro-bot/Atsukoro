@@ -11,10 +11,13 @@ client.timeouts = new Discord.Collection();
 require("dotenv").config();
 
 // Command handler
-const commandFiles = fs.readdirSync("./commands");
-for (let index = 0; index < commandFiles.length; index++) {
-  let command = require("./commands/" + commandFiles[index]);
-  client.commands.set(command.name, command);
+const commandFolders = fs.readdirSync("./commands");
+for (let index = 0; index < commandFolders.length; index++) {
+  let commandFiles = fs.readdirSync("./commands/"+commandFolders[index])
+  for (let j = 0; j < commandFiles.length; j++) {
+    let command = require("./commands/" + commandFolders[index] +"/" + commandFiles[j]);
+    client.commands.set(command.name, command);
+  }
 
   // Log when all commands load
   if (index == commandFiles.length - 1) {
@@ -77,7 +80,7 @@ client.on("message", (message) => {
   }
 
   // Execute command
-  commandObject.execute(message, args);
+  commandObject.execute(message, args, client.commands);
 
   // Set timeout
   client.timeouts.set(message.author.id, Date.now() + commandObject.timeout);
