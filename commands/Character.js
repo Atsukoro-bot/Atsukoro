@@ -36,7 +36,7 @@ module.exports = {
         `;
 
     var variables = {
-      search: args[0],
+      search: args.join(" "),
     };
 
     axios({
@@ -58,7 +58,7 @@ module.exports = {
           response.description
             .replace(/<[^>]*>?/gm, "")
             .replace("&quot;", "")
-            .slice(0, 350) + "...";
+            .slice(0, 550) + "...";
         let embed = new MessageEmbed()
           .setAuthor(response.name.full)
           .setColor("#5865F2")
