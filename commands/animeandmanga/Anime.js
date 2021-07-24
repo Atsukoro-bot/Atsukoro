@@ -67,7 +67,7 @@ module.exports = {
           response.description
             .replace(/<[^>]*>?/gm, "")
             .replace("&quot;", "")
-            .slice(0, 550) + "...";
+            .slice(0, 1020) + "...";
         genres = response.genres.map(function (genre) {
           return " `" + genre + "` ";
         });

@@ -44,13 +44,26 @@ module.exports = {
             "Accept": "application/json",
           }
       }).then(result => {
-          result = result.data.Studio;
+          result = result.data.data.Studio;
+
+          console.log(result);
+
+          result.media.nodes = result.media.nodes.splice(0, 30);
           
           let embed = new MessageEmbed()
+          .setTitle(result.name)
+          .setURL(result.siteUrl)
+          .setColor("#5865F2")
+          .setDescription(`**Anime by ${result.name}**: ` + result.media.nodes.map(node => "`" + node.title.userPreferred + "`").join(", "))
+          .addFields(
+              { name: "Favourites", value: result.favourites, inline: true },
+              { name: "Is animation studio", value: result.isAnimationStudio == true ? "Yes" : "No", inline: true }
+          )
 
           return message.channel.send(embed);
       })
       .catch(err => {
+          console.log(err);
           console.log(err.response.data.errors);
       })
   },
