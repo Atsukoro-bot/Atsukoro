@@ -1,5 +1,10 @@
 #!/bin/sh
 
+echo "PULLING CHANGES"
+git pull
+echo "ADDING NEW FILES"
 git add .
+echo "COMMITING"
 git commit -m "$1"
+"PUSHING"
 git push
