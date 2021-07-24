@@ -1,15 +1,28 @@
 const { Client, Collection } = require("discord.js");
 const chalk = require("chalk");
+const mongoose = require("mongoose");
 const fs = require("fs");
 
 // Create a new client.
 const client = new Client();
+
+// Import mongoose models
+const Guild = require("./models/Guild.js");
 
 // Command collection
 client.commands = new Collection();
 client.timeouts = new Collection();
 
 require("dotenv").config();
+
+// Connect Mongoose database
+mongoose.connect(process.env.MONGOURI, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
+.then(() => {
+  console.log(`${chalk.green("[ DATABASE ]")} Mongoose database connected! `);
+})
+.catch(err => {
+  throw err;
+});
 
 // Command handler
 const commandFolders = fs.readdirSync("./commands");
@@ -20,12 +33,10 @@ for (let index = 0; index < commandFolders.length; index++) {
       let command = require("./commands/" + commandFolders[index] +"/" + commandFiles[j]);
       client.commands.set(command.name, command);
 
-      // hyro start
       console.log(`${chalk.green("[CMD]")} Loaded ${chalk.blueBright(command.name)}`)
     } catch(e) {
       console.log(`${chalk.red("[CMD]")} Error: ${e}`)
     }
-      // hyro end
   }
 }
 
@@ -35,6 +46,18 @@ client.on("ready", () => {
 
   client.user.setActivity("Help | ak.help");
 });
+
+client.on("guildCreate", (guild) => {
+  let newGuild = new Guild({
+    _id: guild.id
+  })
+
+  newGuild.save();
+});
+
+client.on("guildDelete", (guild) => {
+  Guild.findOneAndDelete({ _id: guild.id });
+})
 
 // Do when someone post a message.
 client.on("message", (message) => {
