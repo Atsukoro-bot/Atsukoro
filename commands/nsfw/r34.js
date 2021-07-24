@@ -8,10 +8,6 @@ module.exports = {
   timeout: 3000,
   category: "nsfw",
   execute: async function (message, args) {
-    if (!message.channel.nsfw)
-      return message.channel.send(
-        ":no_entry: You need to be in a NSFW channel"
-      );
     if (!args[0])
       return message.channel.send("🔍 You need to enter the search term!");
     let blacklisted_tags = ["shota","shotacon","loli","lolicon","underage"]

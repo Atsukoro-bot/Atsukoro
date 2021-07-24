@@ -59,6 +59,7 @@ module.exports = {
             .replace(/<[^>]*>?/gm, "")
             .replace("&quot;", "")
             .slice(0, 550) + "...";
+        
         let embed = new MessageEmbed()
           .setAuthor(response.name.full)
           .setColor("#5865F2")
@@ -80,9 +81,7 @@ module.exports = {
             }
           );
 
-        return message.channel.send(embed).catch((err) => {
-          console.log(err);
-        });
+        return message.channel.send(embed);
       })
       .catch((err) => {
         let noFoundEmbed = new MessageEmbed()

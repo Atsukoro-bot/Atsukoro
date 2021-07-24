@@ -1,5 +1,5 @@
 const axios = require("axios");
-let { MessageEmbed, DiscordAPIError } = require("discord.js");
+let { MessageEmbed } = require("discord.js");
 
 const { neko, solo, pussylick, bj, anal, yuri, fuck, cum } = require("../../data/apiLinks.json").nsfw.endpoints;
 const baseUrl = require("../../data/apiLinks.json").nsfw.baseUrl;
@@ -11,8 +11,6 @@ module.exports = {
   timeout: 3000,
   category: "nsfw",
   execute: async function (message, args) {
-    if(!message.channel.nsfw) return message.channel.send("This is not a nsfw channel :x:");
-
     const getData = async (url) => {
       try {
         const res = await axios.get(url);
@@ -45,7 +43,9 @@ module.exports = {
         await postEmbed(await getData(baseUrl + yuri), `Here is your ${args[0]}! :3`);
         break;
 
-        
+      case "solo":
+        await postEmbed(await getData(baseUrl + solo), `Here is your ${args[0]}! :3`);
+        break;
     };
   },
 };
