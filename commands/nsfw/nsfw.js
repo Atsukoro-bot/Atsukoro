@@ -13,8 +13,8 @@ module.exports = {
   execute: async function (message, args) {
     const getData = async (url) => {
       try {
-        const res = await axios.get(url);
-        return res.data.link;
+        const res = (await axios.get(url)).data;
+        return res.link;
       } catch(err) {
         console.log(err);
       }
