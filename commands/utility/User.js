@@ -125,9 +125,7 @@ module.exports = {
             }
           );
 
-        return message.channel.send(embed).catch((err) => {
-          return;
-        });
+        return message.channel.send(embed)
       })
       .catch((err) => {
         console.log(err);

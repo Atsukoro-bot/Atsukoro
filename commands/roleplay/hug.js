@@ -11,35 +11,24 @@ module.exports = {
   timeout: 3000,
   category: "Roleplay",
   execute: async function (message, args) {
-    let messageAuthor;
+    /**
+     * sMember
+     * @type {GuildMember | undefined}
+     */
+     let sMember = message.mentions.users ? message.mentions.users.first() : message.guild.members.cache.get(args[0])
 
-    if (message.mentions.users.first()) {
-      messageAuthor =
-        message.author.username +
-        " hugged " +
-        message.mentions.users.first().username +
-        ".";
-    } else {
-      messageAuthor = message.author.username + " hugged himself/herself.";
-    }
-
-    axios
-      .default({
-        method: "GET",
-        url: baseurl + hug,
-      })
-      .then((response) => {
-        imageUrl = response.data.link;
-
-        let embed = new MessageEmbed()
-          .setAuthor(messageAuthor, message.author.displayAvatarURL())
-          .setImage(imageUrl)
-          .setColor("#5865F2")
-          .setTimestamp()
-          .setFooter(`Request made by ${message.author.tag}`);
-        return message.channel.send(embed).catch((err) => {
-          return;
-        });
-      });
+     let res = (await axios
+       .default({
+         method: "GET",
+         url: baseurl + hug,
+      })).data
+ 
+     let embed = new MessageEmbed()
+       .setAuthor(`${message.author.username} ${sMember == undefined || (sMember?.id == message.author.id) ? " hugged himself/herself" : "hugged " + sMember?.username}`, message.author.displayAvatarURL())
+       .setImage(res.link)
+       .setColor("#5865F2")
+       .setTimestamp()
+       .setFooter(`Request made by ${message.author.tag}`);
+     return message.channel.send(embed)
   },
 };

@@ -1,28 +1,37 @@
-const Discord = require("discord.js");
+const { Client, Collection } = require("discord.js");
+const chalk = require("chalk");
 const fs = require("fs");
 
 // Create a new client.
-const client = new Discord.Client();
+const client = new Client();
 
 // Command collection
-client.commands = new Discord.Collection();
-client.timeouts = new Discord.Collection();
+client.commands = new Collection();
+client.timeouts = new Collection();
 
 require("dotenv").config();
 
 // Command handler
 const commandFolders = fs.readdirSync("./commands");
 for (let index = 0; index < commandFolders.length; index++) {
-  let commandFiles = fs.readdirSync("./commands/"+commandFolders[index])
+  let commandFiles = fs.readdirSync("./commands/"+commandFolders[index]);
   for (let j = 0; j < commandFiles.length; j++) {
-    let command = require("./commands/" + commandFolders[index] +"/" + commandFiles[j]);
-    client.commands.set(command.name, command);
+    try {
+      let command = require("./commands/" + commandFolders[index] +"/" + commandFiles[j]);
+      client.commands.set(command.name, command);
+
+      // hyro start
+      console.log(`${chalk.green("[CMD]")} Loaded ${chalk.blueBright(command.name)}`)
+    } catch(e) {
+      console.log(`${chalk.red("[CMD]")} Error: ${e}`)
+    }
+      // hyro end
   }
 }
 
 // Do when the client is ready.
 client.on("ready", () => {
-  console.log("[BOT] Bot client ready!");
+  console.log(`${chalk.green("[BOT]")} Bot client ready!`);
 
   client.user.setActivity("Help | ak.help");
 });
@@ -38,9 +47,7 @@ client.on("message", (message) => {
 
   // Get command name
   let command = message.content.substring(prefix.length);
-  command = command.split(" ")[0];
-  command = command.toLowerCase();
-  command = command.replace(/[^a-z0-9]/g, "");
+  command = command.split(" ")[0].toLowerCase().replace(/[^a-z0-9]/g, "");
 
   // Get arugments
   let args = message.content.substring(prefix.length + command.length + 1);
@@ -52,12 +59,14 @@ client.on("message", (message) => {
   // Get command
   let commandObject = client.commands.get(command);
 
+  // hyro start
+  if(commandObject.category == "nsfw" && message.channel.nsfw != true) return message.channel.send(":no_entry: You need to be in a NSFW channel");
+  // hyro end
+
   // Check if user has permissions to use the command
   commandObject.perms.forEach((perm) => {
     if (!message.member.hasPermission(perm)) {
-      message.channel.sendMessage(
-        "You do not have permission to use this command!"
-      );
+      message.channel.send("You do not have permission to use this command!");
       return;
     }
   });
@@ -80,6 +89,8 @@ client.on("message", (message) => {
   // Set timeout
   client.timeouts.set(message.author.id, Date.now() + commandObject.timeout);
 });
+
+process.on('uncaughtException', console.log)
 
 // Load the token from the .env file and log in to Discord.
 client.login(process.env.TOKEN);
