@@ -16,7 +16,6 @@ module.exports = {
     const getData = async (url) => {
       try {
         const res = await axios.get(url);
-        console.log(res.data);
         return res.data.link;
       } catch(err) {
         console.log(err);
@@ -45,7 +44,29 @@ module.exports = {
         await postEmbed(await getData(baseUrl + yuri), `Here is your ${args[0]}! :3`);
         break;
 
-        
+      case "solo":
+        await postEmbed(await getData(baseUrl + solo), `Here is your ${args[0]}! :3`);
+        break;
+
+      case "pussylick":
+        await postEmbed(await getData(baseUrl + pussylick), `Here is your ${args[0]}! :3`);
+        break;
+
+      case "bj":
+        await postEmbed(await getData(baseUrl + bj), `Here is your ${args[0]}! :3`);
+        break;
+
+      case "cum":
+        await postEmbed(await getData(baseUrl + cum), `Here is your ${args[0]}! :3`);
+        break;
+
+      case "anal":
+        await postEmbed(await getData(baseUrl + anal), `Here is your ${args[0]}! :3`);
+        break;
+
+      case "fuck":
+        await postEmbed(await getData(baseUrl + fuck), `Here is your ${args[0]}! :3`);
+        break;
     };
   },
 };

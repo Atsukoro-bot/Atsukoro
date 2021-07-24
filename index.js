@@ -18,11 +18,6 @@ for (let index = 0; index < commandFolders.length; index++) {
     let command = require("./commands/" + commandFolders[index] +"/" + commandFiles[j]);
     client.commands.set(command.name, command);
   }
-
-  // Log when all commands load
-  if (index == commandFiles.length - 1) {
-    console.log("[BOT] All commands loaded!");
-  }
 }
 
 // Do when the client is ready.
