@@ -86,9 +86,9 @@ module.exports = {
           let collector = m.createReactionCollector(filter, {
             time: 120000,
           });
-          collector.on("end",(c)=>{
-            m.reactions.removeAll()
-          })
+          collector.on("end", (c) => {
+            m.reactions.removeAll();
+          });
           collector.on("collect", (reaction) => {
             if (reaction.emoji.name == "⬅️") {
               if (p == 0) {
