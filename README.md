@@ -1,2 +1,3 @@
 # Atsukoro
- Anime, manga & japanese culture based discord bot.
+
+Anime, manga & japanese culture based discord bot.

@@ -33,7 +33,7 @@ module.exports = {
 
     var variables = {
       page: 1,
-      perPage: 5
+      perPage: 5,
     };
 
     axios({
@@ -51,18 +51,27 @@ module.exports = {
       .then(function (response) {
         response = response.data.data.Page.characters;
 
-        characters = response.map(ch => {
-            return "`" + ch.name.userPreferred + "`  " + ` **Age**: ${ch.age == null ? "Unknown age" : ch.age}\n${ch.name.userPreferred} appeared in ${ch.media.nodes[0].type.toLowerCase()} ${ch.media.nodes[0].title.userPreferred}\n`
+        characters = response.map((ch) => {
+          return (
+            "`" +
+            ch.name.userPreferred +
+            "`  " +
+            ` **Age**: ${ch.age == null ? "Unknown age" : ch.age}\n${
+              ch.name.userPreferred
+            } appeared in ${ch.media.nodes[0].type.toLowerCase()} ${
+              ch.media.nodes[0].title.userPreferred
+            }\n`
+          );
         });
 
         let embed = new MessageEmbed()
-        .setAuthor("Anime & manga characters having a birthday today")
-        .setColor("#5865F2")
-        .setDescription(characters)
-        .setTimestamp()
-        
-        message.channel.send(embed).catch(err => {
-            return;
+          .setAuthor("Anime & manga characters having a birthday today")
+          .setColor("#5865F2")
+          .setDescription(characters)
+          .setTimestamp();
+
+        message.channel.send(embed).catch((err) => {
+          return;
         });
       })
       .catch((err) => {

@@ -7,7 +7,7 @@ module.exports = {
   description: "Search in the japanese dictionary",
   perms: [],
   timeout: 3000,
-  category: "Roleplay",
+  category: "Utility",
   execute: async function (message, args) {
     if (args.join(" ").length > 254) return;
     let p = 0;
@@ -84,7 +84,10 @@ module.exports = {
             );
           };
           let collector = m.createReactionCollector(filter, {
-            time: 60000,
+            time: 120000,
+          });
+          collector.on("end", (c) => {
+            m.reactions.removeAll();
           });
           collector.on("collect", (reaction) => {
             if (reaction.emoji.name == "⬅️") {
