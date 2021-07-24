@@ -1,7 +1,7 @@
 const axios = require("axios");
 let { MessageEmbed } = require("discord.js");
 
-const baseUrl = require("../data/apiLinks.json").anime.baseUrl;
+const baseUrl = require("../../data/apiLinks.json").anime.baseUrl;
 
 module.exports = {
   name: "birthdays",

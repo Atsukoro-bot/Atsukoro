@@ -1,14 +1,14 @@
 const axios = require("axios");
 let { MessageEmbed } = require("discord.js");
 
-const baseUrl = require("../data/apiLinks.json").anime.baseUrl;
+const baseUrl = require("../../data/apiLinks.json").anime.baseUrl;
 
 module.exports = {
   name: "anime",
   description: "Get specific anime!",
   perms: [],
   timeout: 5000,
-  category: "Roleplay",
+  category: "Informational",
   execute: async function (message, args) {
     var query = `
         query($search: String) {

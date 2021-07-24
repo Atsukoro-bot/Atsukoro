@@ -6,7 +6,7 @@ module.exports = {
   description: "Search for images on Gelbooru",
   perms: [],
   timeout: 3000,
-  category: "NSFW",
+  category: "nsfw",
   execute: async function (message, args) {
     if (!message.channel.nsfw)
       return message.channel.send(

@@ -1,14 +1,14 @@
 const axios = require("axios");
 let { MessageEmbed } = require("discord.js");
 
-const baseUrl = require("../data/apiLinks.json").anime.baseUrl;
+const baseUrl = require("../../data/apiLinks.json").anime.baseUrl;
 
 module.exports = {
   name: "season",
   description: "Get anime airing in the current season",
   perms: [],
   timeout: 1000,
-  category: "Anime",
+  category: "Anime & Manga",
   execute: async function (message, args) {
     var query = `query($year:Int,$season:MediaSeason){
       Page(perPage:10){

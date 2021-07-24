@@ -1,34 +1,39 @@
 const axios = require("axios");
 let { MessageEmbed } = require("discord.js");
 
-const { slap } = require("../data/apiLinks.json").roleplay.endpoints;
-const baseurl = require("../data/apiLinks.json").roleplay.baseUrl;
+const { feed } = require("../../data/apiLinks.json").roleplay.endpoints;
+const baseurl = require("../../data/apiLinks.json").roleplay.baseUrl;
 
 module.exports = {
-  name: "slap",
-  description: "Slap someone!",
+  name: "feed",
+  description: "Feed someone!",
   perms: [],
   timeout: 3000,
   category: "Roleplay",
   execute: async function (message, args) {
     let messageAuthor;
-    if (message.mentions.users.first())
+
+    if (message.mentions.users.first()) {
       messageAuthor =
         message.author.username +
-        " slapped " +
+        " fed " +
         message.mentions.users.first().username +
         ".";
-    else messageAuthor = message.author.username + " slapped himself/herself.";
+    } else {
+      messageAuthor = message.author.username + " fed himself/herself.";
+    }
 
     axios
       .default({
         method: "GET",
-        url: baseurl + slap,
+        url: baseurl + feed,
       })
       .then((response) => {
+        imageUrl = response.data.link;
+
         let embed = new MessageEmbed()
           .setAuthor(messageAuthor, message.author.displayAvatarURL())
-          .setImage(response.data.link)
+          .setImage(imageUrl)
           .setColor("#5865F2")
           .setTimestamp()
           .setFooter(`Request made by ${message.author.tag}`);
