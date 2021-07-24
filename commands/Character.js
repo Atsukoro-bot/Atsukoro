@@ -21,7 +21,7 @@ module.exports = {
                   description(asHtml: false)
                   gender
                   image {
-                    medium
+                    large
                   }
                   media {
                     nodes {
@@ -69,7 +69,7 @@ module.exports = {
               response.media.nodes[0].title.english
             }**`
           )
-          .setThumbnail(response.image.medium)
+          .setThumbnail(response.image.large)
           .addFields(
             { name: "Age", value: response.age, inline: true },
             { name: "Gender", value: response.gender, inline: true },

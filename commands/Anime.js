@@ -17,7 +17,7 @@ module.exports = {
                     userPreferred
                   } 
                   coverImage {
-                    medium
+                    large
                   }
                   isAdult
                   averageScore
@@ -80,7 +80,7 @@ module.exports = {
           .setDescription(
             `${response.description}\n\n**Genres**: ${genres}\n\n**Characters**: ${characters}\n`
           )
-          .setThumbnail(response.coverImage.medium)
+          .setThumbnail(response.coverImage.large)
           .setColor("#5865F2")
           .addFields(
             {
