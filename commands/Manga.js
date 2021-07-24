@@ -8,7 +8,7 @@ module.exports = {
   description: "Get specific manga!",
   perms: [],
   timeout: 5000,
-  category: "Roleplay",
+  category: "Anime & Manga",
   execute: async function (message, args) {
     var query = `
         query($search: String) {
