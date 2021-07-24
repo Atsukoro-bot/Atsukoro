@@ -11,47 +11,53 @@ module.exports = {
   category: "Utility",
   execute: async function (message, args) {
     var query = `
-        query($search: String) {
-            User(search:$search) {
-                avatar {
-                    medium
-                  }
-                  siteUrl
-                  favourites {
-                    anime {
-                      nodes {
-                        title {
-                          userPreferred
-                        }
-                      }
-                    }
-                    manga {
-                      nodes {
-                        title {
-                          userPreferred
-                        }
-                      }
-                    }
-                    characters {
-                      nodes {
-                        name {
-                          userPreferred
-                        }
-                      }
-                    }
-                  }
-                  statistics {
-                    anime {
-                      episodesWatched
-                      minutesWatched
-                      genres {
-                        genre
-                      }
-                    }
-                  }
-                  name
+    query($search: String) {
+      User(search:$search) {
+        avatar {
+          medium
+        }
+        siteUrl
+        favourites {
+          anime {
+            nodes {
+              title {
+                userPreferred
               }
+            }
           }
+          manga {
+            nodes {
+              title {
+                userPreferred
+              }
+            }
+          }
+          characters {
+            nodes {
+              name {
+                userPreferred
+              }
+            }
+          }
+        }
+        statistics {
+          manga {
+            chaptersRead
+            meanScore
+            volumesRead
+          }
+          anime {
+            episodesWatched
+            minutesWatched
+            meanScore
+            genres {
+              genre
+            }
+          }
+        }
+        name
+      }
+    }    
         `;
 
     var variables = {
@@ -121,6 +127,26 @@ module.exports = {
             {
               name: "Minutes watched",
               value: response.statistics.anime.minutesWatched,
+              inline: true,
+            },
+            {
+              name: "Chapters read",
+              value: response.statistics.manga.chaptersRead,
+              inline: true,
+            },
+            {
+              name: "Volumes read",
+              value: response.statistics.manga.volumesRead,
+              inline: true,
+            },
+            {
+              name: "Manga average score",
+              value: response.statistics.manga.meanScore,
+              inline: true,
+            },
+            {
+              name: "Anime average score",
+              value: response.statistics.anime.meanScore,
               inline: true,
             }
           );

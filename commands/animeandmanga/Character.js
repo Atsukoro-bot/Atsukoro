@@ -10,6 +10,10 @@ module.exports = {
   timeout: 5000,
   category: "Anime & Manga",
   execute: async function (message, args) {
+
+    if(!args[0]) return message.channel.send("Please enter a character name to search! :x:");
+
+
     var query = `
         query($search: String) {
             Character(search: $search) {
