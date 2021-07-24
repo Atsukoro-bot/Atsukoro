@@ -1,0 +1,24 @@
+{
+  "roleplay": {
+    "baseUrl": "https://purrbot.site/api",
+    "endpoints": {
+      "hug": "/img/sfw/hug/gif",
+      "cuddle": "/img/sfw/cuddle/gif",
+      "feed": "/img/sfw/feed/gif",
+      "lick": "/img/sfw/lick/gif",
+      "fluff": "/img/sfw/fluff/gif",
+      "blush": "/img/sfw/blush/gif",
+      "cry": "/img/sfw/cry/gif",
+      "bite": "/img/sfw/bite/gif",
+      "dance": "/img/sfw/dance/gif",
+      "poke": "/img/sfw/poke/gif",
+      "tickle": "/img/sfw/tickle/gif",
+      "slap": "/img/sfw/slap/gif",
+      "kiss": "/img/sfw/kiss/gif",
+      "pat": "/img/sfw/pat/gif"
+    }
+  },
+  "anime": {
+    "baseUrl": "https://graphql.anilist.co"
+  }
+}
