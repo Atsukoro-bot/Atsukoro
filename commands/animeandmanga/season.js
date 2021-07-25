@@ -47,7 +47,7 @@ module.exports = {
         vars.season = "SPRING";
         break;
       case 6 || 7 || 8:
-        vars.season = "SPRING";
+        vars.season = "SUMMER";
         break;
       case 9 || 10 || 11:
         vars.season = "FALL";
