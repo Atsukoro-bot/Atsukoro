@@ -179,7 +179,7 @@ module.exports = {
       var m = Math.floor(((d % 86400) % 3600) / 60);
       var s = Math.floor(((d % 86400) % 3600) % 60);
 
-      var dDisplay = day > 0 ? day + (d == 1 ? " day, " : " days, ") : "";
+      var dDisplay = day > 0 ? day + (day == 1 ? " day, " : " days, ") : "";
       var hDisplay = h > 0 ? h + (h == 1 ? " hour, " : " hours, ") : "";
       var mDisplay = m > 0 ? m + (m == 1 ? " minute, " : " minutes, ") : "";
       var sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
