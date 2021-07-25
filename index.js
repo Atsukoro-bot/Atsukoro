@@ -74,8 +74,6 @@ client.on("message", async (message) => {
   let command = message.content.substring(prefix.length);
   command = command.split(" ")[0].toLowerCase().replace(/[^a-z0-9]/g, "");
 
-  console.log(command);
-
   // Get arugments
   let args = message.content.substring(prefix.length + command.length + 1);
   args = args.split(" ");
