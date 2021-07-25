@@ -15,7 +15,7 @@ module.exports = {
     var query = `
     query($page: Int, $perPage: Int) {
         Page(page:$page,perPage: $perPage) {
-          characters(isBirthday: true, sort: FAVOURITES) {
+          characters(isBirthday: true) {
             name {
               userPreferred
             }
@@ -53,30 +53,16 @@ module.exports = {
       .then(function (response) {
         response = response.data.data.Page.characters;
 
-        let embed = new MessageEmbed()
-        .setColor("#5865F2")
-        .setTimestamp()
-        .setFooter(`Requested by ${message.author.tag}`)
-
         function getCharacter(index) {
           let character = response[index];
-          character.name = character.name.userPreferred;
           character.age = character.age == null ? "Unknown age" : character.age;
           character.media = character.media.nodes[0];
-          character.media.title = character.media.title.userPreferred;
-
           return character;
         }
-        
-        let page = 0;
-        const char = getCharacter(page);
-        embed.setAuthor(char.name)
-
-        message.channel.send(embed);
-
+        console.log(getCharacter(1));
       })
       .catch((err) => {
-        console.log(1);
+        console.log(err);
       });
   },
 };

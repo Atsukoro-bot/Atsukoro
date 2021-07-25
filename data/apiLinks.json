@@ -36,5 +36,8 @@
   },
   "image":{
     "baseUrl":"https://nekobot.xyz/api/imagegen"
-  }
+  },
+  "amq":[
+    
+  ]
 }
