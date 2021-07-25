@@ -1,0 +1,379 @@
+{
+    "anime": {
+        "en": {
+            "errors": [
+                "Please enter a anime name to search! :x:",
+                "Adult content allowed only in nsfw channels! :x:"
+            ],
+            "embed": [
+                "Genres",
+                "Characters",
+                "Average Score",
+                "Episodes",
+                "each",
+                "minutes",
+                "Season",
+                "No anime found!",
+                "There were no results for"
+            ]
+        }
+    },
+    "birthdays": {
+        "en": {
+            "embed": [
+                "Age",
+                "Unknown age",
+                "appeared in",
+                "Anime & manga characters having a birthday today"
+            ]
+        }
+    },
+    "character": {
+        "en": {
+            "errors": [
+                "Please enter a character name to search! :x:"   
+            ],
+            "embed": [
+                "Unknown",
+                "Appeared in",
+                "Age",
+                "Gender",
+                "Favourites on Anilist",
+                "No character found!",
+                "There were no results for"
+            ]
+        }
+    },
+    "manga": {
+        "en": {
+            "errors": [
+                "Please enter a manga name to search! :x:",
+                "Adult content allowed only in nsfw channels! :x:"
+            ],
+            "embed": [
+                "Probably not finished",
+                "Genres",
+                "Characters",
+                "Average Score",
+                "Chapters",
+                "No manga found!",
+                "There were no results for"
+            ]
+        }
+    },
+    "season": {
+        "en": {
+            "errors": [
+
+            ],
+            "embed": [
+                "WINTER",
+                "SPRING",
+                "FALL",
+                "WINTER",
+                "Next episode in",
+                "Description",
+                "day",
+                "days",
+                "hour",
+                "hours",
+                "minute",
+                "minutes",
+                "second",
+                "seconds"
+            ]
+        }
+    },
+    "studio": {
+        "en": {
+            "errors": [
+                "Please enter a studio name to search! :x:"
+            ],
+            "embed": [
+                "Anime by",
+                "Favourites",
+                "Is animation studio",
+                "Yes",
+                "No"
+            ]
+        }
+    },
+    "kannagen": {
+        "en": {
+            "errors": [
+
+            ],
+            "embed": [
+                "Request made by"
+            ]
+        }
+    },
+    "nsfw": {
+        "en": {
+            "errors": [
+
+            ],
+            "embed": [
+                "Here is your"                
+            ]
+        }
+    },
+    "r34": {
+        "en": {
+            "errors": [
+                "🔍 You need to enter the search term!",
+                ":x: Nothing found"
+            ],
+            "embed": [
+                "You asked for",
+                "Tags",
+                "Source",
+                "[Click here]"
+            ]
+        }
+    },
+    "bite": {
+        "en": {
+            "errors": [
+
+            ],
+            "embed": [
+                "bited himself/herself",
+                "bited",
+                "Request made by"
+            ]
+        }
+    },
+    "blush": {
+        "en": {
+            "errors": [
+
+            ],
+            "embed": [
+                "blushed",
+                "Request made by"
+            ]
+        }
+    },
+    "cry": {
+        "en": {
+            "errors": [
+
+            ],
+            "embed": [
+                "started crying",
+                "Request made by"
+            ]
+        }
+    },
+    "cuddle": {
+        "en": {
+            "errors": [
+
+            ],
+            "embed": [
+                "cuddled himself/herself",
+                "cuddled",
+                "Request made by"
+            ]
+        }
+    },
+    "dance": {
+        "en": {
+            "errors": [
+
+            ],
+            "embed": [
+                "dance",
+                "Request made by"
+            ]
+        }
+    },
+    "feed": {
+        "en": {
+            "errors": [
+
+            ],
+            "embed": [
+                "fed himself/herself",
+                "fed",
+                "Request made by"
+            ]
+        }
+    },
+    "fluff": {
+        "en": {
+            "errors": [
+
+            ],
+            "embed": [
+                "fluffed himself/herself",
+                "fluffed",
+                "Request made by"
+            ]
+        }
+    },
+    "hug": {
+        "en": {
+            "errors": [
+
+            ],
+            "embed": [
+                "hugged himself/herself",
+                "hugged",
+                "Request made by"
+            ]
+        }
+    },
+    "kiss": {
+        "en": {
+            "errors": [
+
+            ],
+            "embed": [
+                "kissed himself/herself",
+                "kissed",
+                "Request made by"
+            ]
+        }
+    },
+    "lick": {
+        "en": {
+            "errors": [
+
+            ],
+            "embed": [
+                "licked himself/herself",
+                "licked",
+                "Request made by"
+            ]
+        }
+    },
+    "pat": {
+        "en": {
+            "errors": [
+
+            ],
+            "embed": [
+                "patted himself/herself",
+                "patted",
+                "Request made by"
+            ]
+        }
+    },
+    "poke": {
+        "en": {
+            "errors": [
+
+            ],
+            "embed": [
+                "poked himself/herself",
+                "poked",
+                "Request made by"
+            ]
+        }
+    },
+    "slap": {
+        "en": {
+            "errors": [
+
+            ],
+            "embed": [
+                "slapped himself/herself",
+                "slapped",
+                "Request made by"
+            ]
+        }
+    },
+    "tickle": {
+        "en": {
+            "errors": [
+
+            ],
+            "embed": [
+                "tickled himself/herself",
+                "tickled",
+                "Request made by"
+            ]
+        }
+    },
+    "help": {
+        "en": {
+            "errors": [
+
+            ],
+            "embed": [
+                "Available commands"
+            ]
+        }
+    },
+    "japdic": {
+        "en": {
+            "errors": [
+                "❗ No search results found.",
+                "❗ Something broke"
+            ],
+            "embed": [
+                "applies to",
+                "Requested by",
+                "Information from Jisho.org",
+                "You're searching for",
+                "Page",
+                "of",
+                "Common",
+                "WaniKani Level",
+                "Japanese reading",
+                "Meaning"
+            ]
+        }
+    },
+    "prefix": {
+        "en": {
+            "errors": [
+                "Please specify a new prefix!",
+                "Prefix is too long! Please keep it under 32 characters!",
+                "Prefix changed to",
+                "Something went wrong! Please try again later!"
+            ],
+            "embed": [
+                
+            ]
+        }
+    },
+    "togglecommand": {
+        "en": {
+            "errors": [
+                "Something went wrong, contact administrator :x:",
+                "Sucefully turned off command",
+                "Something went wrong, contact administrator :x:",
+                "Please specify a command name! :x:",
+                "This command does not exist! :x:"
+            ],
+            "embed": [
+                
+            ]
+        }
+    },
+    "user": {
+        "en": {
+            "errors": [
+
+            ],
+            "embed": [
+                "Favourite anime",
+                "Favourite manga",
+                "Favourite characters",
+                "Favourite genres",
+                "Requested by",
+                "Episodes watched",
+                "Minutes watched",
+                "Chapters read",
+                "Volumes read",
+                "Manga average score",
+                "Anime average score",
+                "No user found!",
+                "There were no results for"
+            ]
+        }
+    }
+}

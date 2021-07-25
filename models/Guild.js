@@ -14,6 +14,11 @@ const guildSchema = new Schema({
     toggledOffCommands: {
         type: Array,
         default: []
+    },
+
+    language: {
+        type: String,
+        default: "en"
     }
 })
 

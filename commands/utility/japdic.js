@@ -23,7 +23,7 @@ module.exports = {
       )
       .then((res) => {
         if (!res.data.data[0])
-          return message.reply("❗ Nenalezeny žádné výsledky.");
+          return message.reply("❗ No search results found.");
         let data = res.data.data[p];
 
         let vyznamy = [];
@@ -32,7 +32,7 @@ module.exports = {
           vyznamy.push(
             `${L}. ${s.english_definitions.join(", ")} ${
               s.restrictions.length > 0
-                ? `*- platí pro* ${s.restrictions.join("; ")}`
+                ? `*- applies to* ${s.restrictions.join("; ")}`
                 : ""
             }`
           );
@@ -184,12 +184,12 @@ module.exports = {
                 if (data.japanese[0].word !== undefined)
                   newE.addField(
                     data.japanese[0].word,
-                    `${data.is_common ? "`Běžné`, " : ""}${
+                    `${data.is_common ? "`Common`, " : ""}${
                       data.tags[0] !== undefined &&
                       data.tags[0].includes("wanikani")
                         ? `${data.tags[0].replace(
                             "wanikani",
-                            "`WaniKani Úroveň "
+                            "`WaniKani Level "
                           )}\`, `
                         : ""
                     }${
