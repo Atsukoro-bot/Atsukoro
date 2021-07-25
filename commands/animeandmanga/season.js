@@ -9,7 +9,7 @@ module.exports = {
   perms: [],
   timeout: 1000,
   category: "Anime & Manga",
-  execute: async function (message, args, commands) {z
+  execute: async function (message, args, commands) {
     var query = `query($year:Int,$season:MediaSeason){
       Page(perPage:10){
         media(status:RELEASING,type:ANIME,season:$season,seasonYear:$year,sort:FAVOURITES_DESC){
@@ -83,7 +83,6 @@ module.exports = {
             secondsToHms(a.nextAiringEpisode.timeUntilAiring)
           );
         let desc = [];
-        console.log(a.description);
         if (a.description.length < 1024)
           em.addField("Description", desanitize(a.description));
         else {
@@ -138,7 +137,6 @@ module.exports = {
                 secondsToHms(a.nextAiringEpisode.timeUntilAiring)
               );
             desc = [];
-            console.log(a.description);
             if (a.description.length < 1024)
               newEm.addField("Description", desanitize(a.description));
             else {
