@@ -97,9 +97,7 @@ client.on("message", async (message) => {
   // Get command
   let commandObject = client.commands.get(command);
 
-  // hyro start
   if(commandObject.category == "nsfw" && message.channel.nsfw != true) return message.channel.send(":no_entry: You need to be in a NSFW channel");
-  // hyro end
 
   // Check if user has permissions to use the command
   commandObject.perms.forEach((perm) => {
@@ -125,7 +123,7 @@ client.on("message", async (message) => {
   if(toggledOffCommands.includes(command)) return message.channel.send("This command is restricted in this guild!");
 
   // Execute command
-  commandObject.execute(message, args, client.commands);
+  commandObject.execute(message, args, client.commands, client);
 
   // Set timeout
   client.timeouts.set(message.author.id, Date.now() + commandObject.timeout);
