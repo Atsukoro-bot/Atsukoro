@@ -18,7 +18,11 @@ module.exports = {
       }
     })
 
-    let em = new MessageEmbed().setTitle("Available commands")
+    let em = new MessageEmbed()
+    .setTitle("📙 Available commands")
+    .setColor("#5865F2")
+    .setTimestamp()
+    .setFooter(message.author.tag)
     Object.keys(comms).forEach(k=>{
       em.addField(k,comms[k].join(", "))
     })
