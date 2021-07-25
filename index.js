@@ -9,6 +9,9 @@ const client = new Client();
 // Import mongoose models
 const Guild = require("./models/Guild.js");
 
+// Import translation functions
+const getTranslation = require("./utils/getTranslation.js");
+
 // Command collection
 client.commands = new Collection();
 client.timeouts = new Collection();
@@ -63,7 +66,7 @@ client.on("guildDelete", (guild) => {
 client.on("message", async (message) => {
   
   // Get guild information
-  let { prefix, toggledOffCommands } = await Guild.findOne({ _id: message.guild.id });
+  let { prefix, toggledOffCommands, lang } = await Guild.findOne({ _id: message.guild.id });
 
   // Check if message author is bot or channel is dms
   if (message.author.bot || message.channel.type == "dm") return;
@@ -111,8 +114,11 @@ client.on("message", async (message) => {
   // Check if command is not toggled off in this guild
   if(toggledOffCommands.includes(command)) return message.channel.send("This command is restricted in this guild!");
 
+  // Get translations
+  const translations = getTranslation(lang, command);
+
   // Execute command
-  commandObject.execute(message, args, client.commands);
+  commandObject.execute(message, args, client.commands, translations);
 
   // Set timeout
   client.timeouts.set(message.author.id, Date.now() + commandObject.timeout);

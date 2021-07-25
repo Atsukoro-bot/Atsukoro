@@ -118,20 +118,6 @@
             ]
         }
     },
-    "r34": {
-        "en": {
-            "errors": [
-                "🔍 You need to enter the search term!",
-                ":x: Nothing found"
-            ],
-            "embed": [
-                "You asked for",
-                "Tags",
-                "Source",
-                "[Click here]"
-            ]
-        }
-    },
     "bite": {
         "en": {
             "errors": [
