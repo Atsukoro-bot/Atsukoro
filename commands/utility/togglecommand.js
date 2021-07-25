@@ -17,6 +17,7 @@ module.exports = {
     execute: async function (message, args, commands) {
 
         function save(toggledOffCommands) {
+            message.guild.toggledOffCommands = toggledOffCommands;
             Guild.findOneAndUpdate({
                 _id: message.guild.id
             }, {

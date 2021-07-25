@@ -10,7 +10,7 @@ module.exports = {
   perms: [],
   timeout: 3000,
   category: "nsfw",
-  execute: async function (message, args) {
+  execute: async function (message, args, commands) {
     const getData = async (url) => {
       try {
         const res = (await axios.get(url)).data;

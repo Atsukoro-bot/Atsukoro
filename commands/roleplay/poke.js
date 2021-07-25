@@ -10,7 +10,8 @@ module.exports = {
   perms: [],
   timeout: 3000,
   category: "Roleplay",
-  execute: async function (message, args) {
+  execute: async function (message, args, commands) {
+
     /**
      * sMember
      * @type {GuildMember | undefined}

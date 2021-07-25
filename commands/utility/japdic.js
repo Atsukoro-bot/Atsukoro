@@ -8,7 +8,7 @@ module.exports = {
   perms: [],
   timeout: 3000,
   category: "Utility",
-  execute: async function (message, args) {
+  execute: async function (message, args, commands) {
     if (args.join(" ").length > 254) return;
     let p = 0;
     axios

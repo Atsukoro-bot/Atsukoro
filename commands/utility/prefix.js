@@ -14,7 +14,7 @@ module.exports = {
     perms: [],
     timeout: 5000,
     category: "Utility",
-    execute: async function (message, args) {
+    execute: async function (message, args, commands) {
 
         // Check if user is administator
         if (!message.member.hasPermission("ADMINISTRATOR")) return message.channel.send("You dont have permissions to use this command! :x:");
@@ -27,6 +27,7 @@ module.exports = {
 
 
         // Set new prefix
+        message.guild.prefix = args[0];
         Guild.updateOne({
             _id: message.guild.id
         }, {

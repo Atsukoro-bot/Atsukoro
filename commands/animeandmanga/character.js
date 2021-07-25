@@ -9,7 +9,7 @@ module.exports = {
   perms: [],
   timeout: 5000,
   category: "Anime & Manga",
-  execute: async function (message, args) {
+  execute: async function (message, args, commands) {
 
     if(!args[0]) return message.channel.send("Please enter a character name to search! :x:");
 

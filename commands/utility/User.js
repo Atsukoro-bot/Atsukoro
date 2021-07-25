@@ -9,7 +9,7 @@ module.exports = {
   perms: [],
   timeout: 5000,
   category: "Utility",
-  execute: async function (message, args, commands, translations) {
+  execute: async function (message, args, commands) {
     var query = `
     query($search: String) {
       User(search:$search) {

@@ -9,7 +9,7 @@ module.exports = {
   perms: [],
   timeout: 3000,
   category: "Image Generation",
-  execute: async function (message, args) {
+  execute: async function (message, args, commands) {
     if(!args[0]) return;
     let res = (await axios({
         method: "GET",

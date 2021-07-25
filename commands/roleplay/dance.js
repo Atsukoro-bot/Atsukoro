@@ -10,7 +10,7 @@ module.exports = {
   perms: [],
   timeout: 3000,
   category: "Roleplay",
-  execute: async function (message, args) {
+  execute: async function (message, args, commands) {
     let messageAuthor = message.author.username + " danced.";
 
     let res = (await axios

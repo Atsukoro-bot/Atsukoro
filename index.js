@@ -9,9 +9,6 @@ const client = new Client();
 // Import mongoose models
 const Guild = require("./models/Guild.js");
 
-// Import translation functions
-const getTranslation = require("./utils/getTranslation.js");
-
 // Command collection
 client.commands = new Collection();
 client.timeouts = new Collection();
@@ -21,7 +18,7 @@ require("dotenv").config();
 // Connect Mongoose database
 mongoose.connect(process.env.MONGOURI, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
 .then(() => {
-  console.log(`${chalk.green("[ DATABASE ]")} Mongoose database connected! `);
+  console.log(`${chalk.green("[DATABASE]")} Mongoose database connected! `);
 })
 .catch(err => {
   throw err;
@@ -44,10 +41,17 @@ for (let index = 0; index < commandFolders.length; index++) {
 }
 
 // Do when the client is ready.
-client.on("ready", () => {
+client.on("ready", async() => {
   console.log(`${chalk.green("[BOT]")} Bot client ready!`);
 
   client.user.setActivity("Help | ak.help");
+
+  client.guilds.cache.forEach(async(guild) => {
+    let { prefix, toggledOffCommands, lang } = await Guild.findOne({ _id: guild.id });
+    guild.prefix = prefix;
+    guild.toggledOffCommands = toggledOffCommands;
+    guild.lang = lang;
+  })
 });
 
 client.on("guildCreate", (guild) => {
@@ -66,7 +70,7 @@ client.on("guildDelete", (guild) => {
 client.on("message", async (message) => {
   
   // Get guild information
-  let { prefix, toggledOffCommands, lang } = await Guild.findOne({ _id: message.guild.id });
+  let { prefix, toggledOffCommands, lang } = message.guild
 
   // Check if message author is bot or channel is dms
   if (message.author.bot || message.channel.type == "dm") return;
@@ -114,11 +118,8 @@ client.on("message", async (message) => {
   // Check if command is not toggled off in this guild
   if(toggledOffCommands.includes(command)) return message.channel.send("This command is restricted in this guild!");
 
-  // Get translations
-  const translations = getTranslation(lang, command);
-
   // Execute command
-  commandObject.execute(message, args, client.commands, translations);
+  commandObject.execute(message, args, client.commands);
 
   // Set timeout
   client.timeouts.set(message.author.id, Date.now() + commandObject.timeout);
