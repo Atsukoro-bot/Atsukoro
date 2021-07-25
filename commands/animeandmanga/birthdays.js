@@ -13,7 +13,7 @@ module.exports = {
     var query = `
     query($page: Int, $perPage: Int) {
         Page(page:$page,perPage: $perPage) {
-          characters(isBirthday: true) {
+          characters(isBirthday: true, sort: FAVOURITES) {
             name {
               userPreferred
             }
