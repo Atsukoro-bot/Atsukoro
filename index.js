@@ -60,8 +60,10 @@ client.on("guildDelete", (guild) => {
 })
 
 // Do when someone post a message.
-client.on("message", (message) => {
-  let prefix = "ak.";
+client.on("message", async (message) => {
+  
+  // Get guild information
+  let { prefix, toggledOffCommands } = await Guild.findOne({ _id: message.guild.id });
 
   // Check if message author is bot or channel is dms
   if (message.author.bot || message.channel.type == "dm") return;
@@ -71,6 +73,8 @@ client.on("message", (message) => {
   // Get command name
   let command = message.content.substring(prefix.length);
   command = command.split(" ")[0].toLowerCase().replace(/[^a-z0-9]/g, "");
+
+  console.log(command);
 
   // Get arugments
   let args = message.content.substring(prefix.length + command.length + 1);
@@ -105,6 +109,9 @@ client.on("message", (message) => {
   } else {
     client.timeouts.delete(message.author.id);
   }
+
+  // Check if command is not toggled off in this guild
+  if(toggledOffCommands.includes(command)) return message.channel.send("This command is restricted in this guild!");
 
   // Execute command
   commandObject.execute(message, args, client.commands);
