@@ -6,10 +6,6 @@ const fs = require("fs");
 // Create a new client.
 const client = new Client();
 
-// initialize discord buttons
-const disbut = require('discord-buttons');
-disbut(client);
-
 // kdo je dobry premier
 
 // Import mongoose models

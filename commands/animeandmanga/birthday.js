@@ -3,18 +3,13 @@ let {
   MessageEmbed
 } = require("discord.js");
 
-const {
-  MessageButton,
-  MessageActionRow
-} = require("discord-buttons")
-
 const baseUrl = require("../../data/apiLinks.json").anime.baseUrl;
 
 module.exports = {
   name: "birthdays",
   description: "Get characters that has birthday today!",
   perms: [],
-  timeout: 5000,
+  timeout: 10000,
   category: "Anime & Manga",
   execute: async function (message, args, commands, client) {
 
@@ -62,24 +57,6 @@ module.exports = {
         let page = 0;
         response = response.data.data.Page.characters;
 
-        let embed = new MessageEmbed()
-          .setColor("#5865F2")
-          .setTimestamp()
-          .setFooter(`Requested by ${message.author.tag}`)
-
-        let beforeButton = new MessageButton()
-          .setLabel("Before")
-          .setStyle('blurple')
-          .setID(`before_${message.author.id}`)
-
-        let nextButton = new MessageButton()
-          .setLabel("Next")
-          .setStyle('blurple')
-          .setID(`next_${message.author.id}`)
-
-        let row = new MessageActionRow()
-          .addComponents(beforeButton, nextButton)
-
         function getCharacter(index) {
           let character = response[index];
           character.name = character.name.userPreferred == undefined ? character.name : character.name.userPreferred;
@@ -91,41 +68,58 @@ module.exports = {
         async function displayCharacter(character, message) {
           let nextCharEmbed = new MessageEmbed()
             .setAuthor(`${character.name} has a birthday today! 🎉`)
+            .setDescription(`Appeared in ${character.media.nodes[0].type.toLowerCase()} **${character.media.nodes[0].title.userPreferred}**`)
             .setImage(character.image)
             .setColor("#5865F2")
 
           message.edit(nextCharEmbed);
         }
 
+        let embed = new MessageEmbed()
+          .setColor("#5865F2")
+          .setTimestamp()
+          .setFooter(`Requested by ${message.author.tag}`)
+
         const char = getCharacter(page);
         embed.setAuthor(`${char.name} has a birthday today! 🎉`)
-        embed.setImage(`${char.image}`)
+        embed.setDescription(`Appeared in ${char.media.nodes[0].type.toLowerCase()} **${char.media.nodes[0].title.userPreferred}**`)
+        embed.setImage(char.image)
 
-        message.channel.send(embed, row).then(m => {
-          client.on('clickButton', async (button) => {
-            // Handle click and display a new character
-            switch (button.id) {
-              case `before_${message.author.id}`:
-                // Display character before this character
-                
-                await button.reply.defer()
+        message.channel.send(embed).then(m => {
+          m.react("⬅");
+          m.react("➡️");
+          m.react("❌");
 
+          const filter = (reaction, user) => {
+            return user.id === message.author.id && ["⬅", "➡️", "❌"].includes(reaction.emoji.name);
+          }
+
+          const collector = m.createReactionCollector(filter, { time: 120000 });
+
+          collector.on('collect', (reaction, user) => {
+            switch(reaction.emoji.name) {
+              case "⬅":
+                // Get character before
                 if(page == 0) page++;
-
                 page--;
-                let chr = await getCharacter(0);
-                displayCharacter(chr, m);
-                break;
 
-              case `next_${message.author.id}`:
-                // Display next character
+                const chrBef = getCharacter(page);
+                displayCharacter(chrBef, m);
+              break;
 
-                await button.reply.defer()
+              case "➡️":
+                // Get character after
+                if(page > response.length) return;
 
                 page++;
-                let chr2 = await getCharacter(page);
-                displayCharacter(chr2, m);
-                break;
+                const chrAft = getCharacter(page);
+                displayCharacter(chrAft, m);
+              break;
+
+              case "❌":
+                collector.stop();
+                m.reactions.removeAll();
+              break;
             }
           });
         });
