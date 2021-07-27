@@ -10,9 +10,10 @@ module.exports = {
   timeout: 5000,
   category: "Anime & Manga",
   execute: async function (message, args, commands) {
-
-    if(!args[0]) return message.channel.send("Please enter a character name to search! :x:");
-
+    if (!args[0])
+      return message.channel.send(
+        "Please enter a character name to search! :x:"
+      );
 
     var query = `
         query($search: String) {
@@ -63,7 +64,7 @@ module.exports = {
             .replace(/<[^>]*>?/gm, "")
             .replace("&quot;", "")
             .slice(0, 550) + "...";
-        
+
         let embed = new MessageEmbed()
           .setAuthor(response.name.full)
           .setColor("#5865F2")

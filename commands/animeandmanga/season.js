@@ -32,7 +32,7 @@ module.exports = {
         }
       }
     }`;
-    
+
     let today = new Date(Date.now());
     let vars = {
       year: today.getFullYear(),

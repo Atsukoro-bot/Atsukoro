@@ -1,26 +1,26 @@
 const { Schema, model } = require("mongoose");
 
 const guildSchema = new Schema({
-    _id: {
-        type: String,
-        required: true
-    },
+  _id: {
+    type: String,
+    required: true,
+  },
 
-    prefix: {
-        type: String,
-        default: "ak."
-    },
+  prefix: {
+    type: String,
+    default: "ak.",
+  },
 
-    toggledOffCommands: {
-        type: Array,
-        default: []
-    },
+  toggledOffCommands: {
+    type: Array,
+    default: [],
+  },
 
-    language: {
-        type: String,
-        default: "en"
-    }
-})
+  language: {
+    type: String,
+    default: "en",
+  },
+});
 
 const Guild = new model("Guild", guildSchema);
 

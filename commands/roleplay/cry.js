@@ -13,11 +13,12 @@ module.exports = {
   execute: async function (message, args, commands) {
     let messageAuthor = message.author.username + " started crying.";
 
-    let res = (await axios
-      .default({
+    let res = (
+      await axios.default({
         method: "GET",
         url: baseurl + cry,
-      })).data
+      })
+    ).data;
 
     let embed = new MessageEmbed()
       .setAuthor(messageAuthor, message.author.displayAvatarURL())
@@ -25,6 +26,6 @@ module.exports = {
       .setColor("#5865F2")
       .setTimestamp()
       .setFooter(`Request made by ${message.author.tag}`);
-    return message.channel.send(embed)
+    return message.channel.send(embed);
   },
 };

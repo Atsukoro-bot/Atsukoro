@@ -10,8 +10,8 @@ module.exports = {
   timeout: 5000,
   category: "Anime & Manga",
   execute: async function (message, args, commands) {
-
-    if(!args[0]) return message.channel.send("Please enter a manga name to search! :x:");
+    if (!args[0])
+      return message.channel.send("Please enter a manga name to search! :x:");
 
     var query = `
         query($search: String) {

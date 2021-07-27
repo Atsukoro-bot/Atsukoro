@@ -1,7 +1,8 @@
 const axios = require("axios");
 let { MessageEmbed } = require("discord.js");
 
-const { neko, solo, pussylick, bj, anal, yuri, fuck, cum } = require("../../data/apiLinks.json").nsfw.endpoints;
+const { neko, solo, pussylick, bj, anal, yuri, fuck, cum } =
+  require("../../data/apiLinks.json").nsfw.endpoints;
 const baseUrl = require("../../data/apiLinks.json").nsfw.baseUrl;
 
 module.exports = {
@@ -15,10 +16,10 @@ module.exports = {
       try {
         const res = (await axios.get(url)).data;
         return res.link;
-      } catch(err) {
+      } catch (err) {
         console.log(err);
       }
-    }
+    };
 
     const postEmbed = async (url, author) => {
       try {
@@ -28,43 +29,67 @@ module.exports = {
           .setImage(url);
 
         return message.channel.send(embed);
-      } catch(err) {
+      } catch (err) {
         console.log(err);
       }
-    }
+    };
 
-    switch(args[0]) {
+    switch (args[0]) {
       case "neko":
-        await postEmbed(await getData(baseUrl + neko), `Here is your ${args[0]}! :3`);
+        await postEmbed(
+          await getData(baseUrl + neko),
+          `Here is your ${args[0]}! :3`
+        );
         break;
 
       case "yuri":
-        await postEmbed(await getData(baseUrl + yuri), `Here is your ${args[0]}! :3`);
+        await postEmbed(
+          await getData(baseUrl + yuri),
+          `Here is your ${args[0]}! :3`
+        );
         break;
 
       case "solo":
-        await postEmbed(await getData(baseUrl + solo), `Here is your ${args[0]}! :3`);
+        await postEmbed(
+          await getData(baseUrl + solo),
+          `Here is your ${args[0]}! :3`
+        );
         break;
 
       case "pussylick":
-        await postEmbed(await getData(baseUrl + pussylick), `Here is your ${args[0]}! :3`);
+        await postEmbed(
+          await getData(baseUrl + pussylick),
+          `Here is your ${args[0]}! :3`
+        );
         break;
 
       case "bj":
-        await postEmbed(await getData(baseUrl + bj), `Here is your ${args[0]}! :3`);
+        await postEmbed(
+          await getData(baseUrl + bj),
+          `Here is your ${args[0]}! :3`
+        );
         break;
 
       case "cum":
-        await postEmbed(await getData(baseUrl + cum), `Here is your ${args[0]}! :3`);
+        await postEmbed(
+          await getData(baseUrl + cum),
+          `Here is your ${args[0]}! :3`
+        );
         break;
 
       case "anal":
-        await postEmbed(await getData(baseUrl + anal), `Here is your ${args[0]}! :3`);
+        await postEmbed(
+          await getData(baseUrl + anal),
+          `Here is your ${args[0]}! :3`
+        );
         break;
 
       case "fuck":
-        await postEmbed(await getData(baseUrl + fuck), `Here is your ${args[0]}! :3`);
+        await postEmbed(
+          await getData(baseUrl + fuck),
+          `Here is your ${args[0]}! :3`
+        );
         break;
-    };
+    }
   },
 };
