@@ -3,7 +3,7 @@ let { MessageEmbed } = require("discord.js");
 const User = require("../../models/User");
 
 const baseUrl = require("../../data/apiLinks.json").anime.baseUrl;
-
+let data = [];
 module.exports = {
   name: "quiz",
   description: "Get characters that has birthday today!",
@@ -48,7 +48,7 @@ module.exports = {
       let vars = {
         username: user,
       };
-      let data = (
+      data = (
         await axios({
           url: baseUrl,
           method: "POST",
@@ -63,37 +63,77 @@ module.exports = {
         })
       ).data.data.MediaListCollection.lists; // save user's lists
       // end anilist api request
+
       data = data.filter(
         (l) =>
           (l.status == "COMPLETED" || l.status == "CURRENT") && !l.isCustomList // filter all non-custom lists which are completed or current
       );
+
+      if(data.length == 0) return message.channel.send(":x: You appear to have no completed or watching anime on your profile")
+
+      let vid = await getVid()
+      while (vid == false) {
+        vid = await getVid()
+      }
+      if(vid == undefined){
+        return message.channel.send(":) Game over")
+      }
+      
+      console.log(vid.name.toLowerCase())
+      message.channel.send(vid.link).then(m=>{
+        const filter = e=>e.author.id == message.author.id
+        let collector = message.channel.createMessageCollector(filter,{time:15000})
+        collector.on('collect',me=>{
+          console.log(me.content == vid.name.toLowerCase())
+          if(me.content == vid.name || me.content == vid.name.toLowerCase()){
+            message.channel.send("correct")
+          }
+        })
+        collector.on('end',me=>{
+          message.channel.send("end")
+        })
+
+      })
+    }
+
+    /**
+     * Get vid link by name from list
+     * returns undefined if list is empty
+     * returns false if nothing found
+     * returns object if link
+     */
+    async function getVid(){
+      if(data.length == 0) return undefined
       let list = Math.floor(Math.random() * (data.length - 1)); // get random list
       try {
         let chosen =
           data[list].entries[
             Math.floor(Math.random() * (data[list].entries.length - 1))
           ].media.title.romaji; // get random entry
+      let itemIndex = data.indexOf(data[list].entries[
+        Math.floor(Math.random() * (data[list].entries.length - 1))
+      ])
+      data.splice(itemIndex)
         
           const res = await axios.get(
           `https://staging.animethemes.moe/api/search/?q=${escape(chosen)}`
         ); // request video
         
-        if(res.status > 404) return message.channel.send("the server seems to be having some problems")
-        if(!res.data.search.anime[0]) return console.log("[Q] anime not found")
+        if(res.status > 404) return 500
+        if(!res.data.search.anime[0]) return false
         
         let slug = res.data.search.anime[0].slug
         let videos = res.data.search.themes.filter(v=>v.type == "OP")
         console.log(videos.length)
-        if(res.data.search.themes.length == 0 || videos.length == 0) return message.channel.send("no video")
+        if(res.data.search.themes.length == 0 || videos.length == 0) return false
         
-        console.log(`https://staging.animethemes.moe/wiki/anime/${slug}/${videos[0].slug}`)
         const vidReq = await axios.get(`https://staging.animethemes.moe/wiki/anime/${slug}/${videos[0].slug}`)
-          
+          console.log(`https://staging.animethemes.moe/wiki/anime/${slug}/${videos[0].slug}`)
         let vidRegEx = /<video src="[a-zA-Z\/:\.\-0-9]+/gm
         let link = vidRegEx.exec(vidReq.data)[0]
-        if(!link) return message.channel.send("error getting link")
+        if(!link) return false
         
-        message.channel.send(link.replace("<video src=\"",""))
+        return {link:link.replace("<video src=\"",""),name:chosen}
       } catch (error) {
         message.channel.send("neco se posralo");
         message.channel.send(error.message);
