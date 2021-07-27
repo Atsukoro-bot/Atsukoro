@@ -2,8 +2,6 @@ const axios = require("axios").default;
 let { MessageEmbed } = require("discord.js");
 const User = require("../../models/User")
 
-const { MessageButton, MessageActionRow } = require("discord-buttons")
-
 const baseUrl = require("../../data/apiLinks.json").anime.baseUrl;
 
 
