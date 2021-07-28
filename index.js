@@ -2,6 +2,7 @@ const { Client, Collection } = require("discord.js");
 const chalk = require("chalk");
 const mongoose = require("mongoose");
 const fs = require("fs");
+const app = require("express")();
 
 // Create a new client.
 const client = new Client();
@@ -10,10 +11,13 @@ const client = new Client();
 
 // Import mongoose models
 const Guild = require("./models/Guild.js");
+const { default: axios } = require("axios");
 
 // Command collection
 client.commands = new Collection();
 client.timeouts = new Collection();
+
+let webApiCommandCollection = [];
 
 require("dotenv").config();
 
@@ -42,6 +46,7 @@ for (let index = 0; index < commandFolders.length; index++) {
         "/" +
         commandFiles[j]);
       client.commands.set(command.name, command);
+      webApiCommandCollection.push(command);
 
       console.log(
         `${chalk.green("[CMD]")} Loaded ${chalk.blueBright(command.name)}`
@@ -142,6 +147,15 @@ client.on("message", async (message) => {
 });
 
 process.on("uncaughtException", console.log);
+
+// Start the web server
+app.post("/commands", (req, res) => {
+  return res.json(webApiCommandCollection);
+});
+
+app.listen(3000, () => {
+  console.log(`${chalk.green("[ WEB ]")} Api ready!`)
+});
 
 // Load the token from the .env file and log in to Discord.
 client.login(process.env.TOKEN);
