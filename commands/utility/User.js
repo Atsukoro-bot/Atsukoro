@@ -14,7 +14,7 @@ module.exports = {
     query($search: String) {
       User(search:$search) {
         avatar {
-          medium
+          large
         }
         siteUrl
         favourites {
@@ -44,12 +44,14 @@ module.exports = {
           manga {
             chaptersRead
             meanScore
+            count
             volumesRead
           }
           anime {
             episodesWatched
             minutesWatched
             meanScore
+            count
             genres {
               genre
             }
@@ -79,79 +81,33 @@ module.exports = {
       .then(function (response) {
         response = response.data.data.User;
 
-        favAnime = response.favourites.anime.nodes.map((anime) => {
-          return " `" + anime.title.userPreferred + "` ";
-        });
+        ai = 0;
+        mi = 0;
+        ci = 0;
 
-        favManga = response.favourites.manga.nodes.map((manga) => {
-          return " `" + manga.title.userPreferred + "` ";
-        });
+        let characterString = response.favourites.characters.nodes.slice(0,3).map(item => { ci++; return "`" + ci + ")` " + item.name.userPreferred })
+        let animeString = response.favourites.anime.nodes.slice(0,3).map((item) => { ai++; return "`" + ai + ")` " + item.title.userPreferred });
+        let mangaString = response.favourites.manga.nodes.slice(0,3).map(item => { mi++; return "`" + mi + ")` " + item.title.userPreferred });
 
-        favCharacters = response.favourites.characters.nodes.map(
-          (character) => {
-            return " `" + character.name.userPreferred + "` ";
-          }
-        );
+        mangaString = mangaString.length <= 0 ? "No manga" : mangaString;
+        animeString = animeString.length <= 0 ? "No anime" : animeString;
+        characterString = characterString.length <= 0 ? "No characters" : characterString;
 
-        favGenres = response.statistics.anime.genres.map((genres) => {
-          return " `" + genres.genre + "` ";
-        });
-
-        let embed = new MessageEmbed()
-          .setTitle(response.name)
-          .setURL(response.siteUrl)
-          .setThumbnail(response.avatar.medium)
+        let overAllStatsEmbed = new MessageEmbed()
           .setColor("#5865F2")
-          .setDescription(
-            `${
-              favAnime.length == 0
-                ? ""
-                : "Favourite anime: " + favAnime + "\n\n"
-            }${
-              favManga.length == 0
-                ? ""
-                : "Favourite manga: " + favManga + "\n\n"
-            }${
-              favCharacters.length == 0
-                ? ""
-                : "Favourite characters: " + favCharacters + "\n\n"
-            }**Favourite genres**: ${favGenres}\n\n`
-          )
-          .setFooter(`Requested by ${message.author.tag}`)
+          .setTitle(`📘 ${response.name}'s Overall Stats`, response.siteUrl)
+          .setThumbnail(response.avatar.large)
           .addFields(
-            {
-              name: "Episodes watched",
-              value: response.statistics.anime.episodesWatched,
-              inline: true,
-            },
-            {
-              name: "Minutes watched",
-              value: response.statistics.anime.minutesWatched,
-              inline: true,
-            },
-            {
-              name: "Chapters read",
-              value: response.statistics.manga.chaptersRead,
-              inline: true,
-            },
-            {
-              name: "Volumes read",
-              value: response.statistics.manga.volumesRead,
-              inline: true,
-            },
-            {
-              name: "Manga average score",
-              value: response.statistics.manga.meanScore,
-              inline: true,
-            },
-            {
-              name: "Anime average score",
-              value: response.statistics.anime.meanScore,
-              inline: true,
-            }
-          );
+            { name: "Anime", value: "`Episoded watched: " + response.statistics.anime.episodesWatched + "`\n`Watched anime: " + response.statistics.anime.count + "`", inline: true },
+            { name: "Manga", value: "`Chapters read: " + response.statistics.manga.chaptersRead + "`\n`Manga read: " + response.statistics.manga.count + "`" }
+          )
+          .addFields(
+            { name: "Favourite anime", value: animeString, inline: true },
+            { name: "Favourite manga", value: mangaString, inline: true },
+            { name: "Favourite characters", value: characterString, inline: true }
+          )
 
-        return message.channel.send(embed);
+        return message.channel.send(overAllStatsEmbed);
       })
       .catch((err) => {
         console.log(err);
