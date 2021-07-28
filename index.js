@@ -153,7 +153,7 @@ app.post("/commands", (req, res) => {
   return res.json(webApiCommandCollection);
 });
 
-app.listen(3000, () => {
+app.listen((process.env.PORT || 3000), () => {
   console.log(`${chalk.green("[ WEB ]")} Api ready!`)
 });
 
