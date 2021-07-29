@@ -58,6 +58,7 @@ module.exports = {
               }
               image {
                 large
+                medium
               }
               description(asHtml: true)
             }
@@ -121,7 +122,9 @@ module.exports = {
         }
 
         function sanitizeHtml(text) {
-          return text.replace(new RegExp('<[^>]*>', 'g'), '')
+          text = text.replace(new RegExp('<[^>]*>', 'g'), '');
+          text = text.split("").splice(0,1000).join("");
+          return text;
         }
 
         ai = 0;
@@ -180,7 +183,7 @@ module.exports = {
                 await m.delete();
 
                 let aEmbed = new MessageEmbed()
-                .setTitle(`${response.name}'s favourite character`)
+                .setTitle(`${response.name}'s favourite characters`)
                 .setThumbnail(data.image.large)
                 .setDescription("**" + data.name.userPreferred + "**\n" + sanitizeHtml(data.description))
                 .setTimestamp()
@@ -191,9 +194,40 @@ module.exports = {
                   mes.react("⬅️");
                   mes.react("➡️");
 
-                  const filter = (reac, use ) => {
+                  const filter = (reac, use) => {
                     return use.id == message.author.id && ["⬅️", "➡️"].includes(reac.emoji.name);
                   }
+
+                  const col = mes.createReactionCollector(filter, { time: 120000 });
+
+                  function editEmbed(me, page) {
+                    dataC = getData("character", page);
+                    let newEmbed = new MessageEmbed()
+                    .setTitle(`${response.name}'s favourite characters`)
+                    .setDescription("**" + dataC.name.userPreferred + "**\n" + sanitizeHtml(dataC.description))
+                    .setTimestamp()
+                    .setColor("#5865F2")
+                    .setFooter(`page ${page + 1}/${response.favourites.anime.nodes.length - 1}`)
+                    .setThumbnail(dataC.image.large)
+                    
+                    me.edit(newEmbed);
+                  }
+
+                  col.on("collect", (react, use) => {
+                    switch (react.emoji.name) {
+                      case "⬅️":
+                        if(page == 0) return;
+                        page--;
+                        editEmbed(mes, page);
+                        break;
+                    
+                      default:
+                        if((response.favourites.characters.nodes.length - 1) == page) return;
+                        page++;
+                        editEmbed(mes, page);
+                        break;
+                    }
+                  })
                 });
                 break;
 
