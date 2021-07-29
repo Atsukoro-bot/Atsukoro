@@ -123,6 +123,7 @@ module.exports = {
 
         function sanitizeHtml(text) {
           text = text.replace(new RegExp('<[^>]*>', 'g'), '');
+          text = text.replace("&quot;","");
           text = text.split("").splice(0,1000).join("");
           return text;
         }
@@ -188,7 +189,7 @@ module.exports = {
                 .setDescription("**" + data.name.userPreferred + "**\n" + sanitizeHtml(data.description))
                 .setTimestamp()
                 .setColor("#5865F2")
-                .setFooter(`page ${page + 1}/${response.favourites.anime.nodes.length}`)
+                .setFooter(`page ${page}/${response.favourites.anime.nodes.length}`)
 
                 return message.channel.send(aEmbed).then(mes => {
                   mes.react("⬅️");
@@ -207,7 +208,7 @@ module.exports = {
                     .setDescription("**" + dataC.name.userPreferred + "**\n" + sanitizeHtml(dataC.description))
                     .setTimestamp()
                     .setColor("#5865F2")
-                    .setFooter(`page ${page + 1}/${response.favourites.anime.nodes.length - 1}`)
+                    .setFooter(`page ${page}/${response.favourites.anime.nodes.length}`)
                     .setThumbnail(dataC.image.large)
                     
                     me.edit(newEmbed);
