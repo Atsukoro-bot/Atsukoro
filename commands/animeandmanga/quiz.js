@@ -90,7 +90,7 @@ module.exports = {
           }
         })
         collector.on('end',me=>{
-          message.channel.send("end")
+          message.channel.send("Correct answer: "+ vid.name)
         })
 
       })
