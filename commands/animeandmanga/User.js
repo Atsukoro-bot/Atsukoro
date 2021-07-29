@@ -10,6 +10,10 @@ module.exports = {
   timeout: 5000,
   category: "Utility",
   execute: async function (message, args, commands) {
+
+    if(!args[0]) return message.channel.send("Please send the name of the user you want to find! :x:");
+    message.delete();
+
     var query = `
     query($search: String) {
       User(search:$search) {
@@ -23,6 +27,13 @@ module.exports = {
               title {
                 userPreferred
               }
+              episodes
+              coverImage {
+                extraLarge
+              }
+              averageScore
+              description(asHtml: true)
+              favourites
             }
           }
           manga {
@@ -30,6 +41,14 @@ module.exports = {
               title {
                 userPreferred
               }
+              chapters
+              volumes
+              favourites
+              coverImage {
+                extraLarge
+              }
+              averageScore
+              description(asHtml: true)
             }
           }
           characters {
@@ -37,6 +56,10 @@ module.exports = {
               name {
                 userPreferred
               }
+              image {
+                large
+              }
+              description(asHtml: true)
             }
           }
         }
@@ -81,6 +104,26 @@ module.exports = {
       .then(function (response) {
         response = response.data.data.User;
 
+        function getData(type, page) {
+          switch(type) {
+            case "anime":
+                return response.favourites.anime.nodes[page];
+              break;
+            
+            case "manga":
+                return response.favourites.manga.nodes[page];
+              break;
+            
+            case "character":
+                return response.favourites.characters.nodes[page];
+              break;
+          }
+        }
+
+        function sanitizeHtml(text) {
+          return text.replace(new RegExp('<[^>]*>', 'g'), '')
+        }
+
         ai = 0;
         mi = 0;
         ci = 0;
@@ -106,8 +149,72 @@ module.exports = {
             { name: "Favourite manga", value: mangaString, inline: true },
             { name: "Favourite characters", value: characterString, inline: true }
           )
+          .setFooter(`🧍 - Display ${response.name}'s favourite characters\n📚 - Display ${response.name}'s favourite manga\n🎥 - Display ${response.name}'s favourite anime shows`)
 
-        return message.channel.send(overAllStatsEmbed);
+        return message.channel.send(overAllStatsEmbed).then(m => {
+          m.react("🧍");
+          m.react("📚");
+          m.react("🎥");
+
+          const filter = (reaction, user) => {
+            return user.id === message.author.id && ["🧍", "📚", "🎥"].includes(reaction.emoji.name)
+          }
+
+          const collector = m.createReactionCollector(filter, { time: 120000 });
+
+          collector.on("collect", async (reaction, user) => {
+            collector.stop();
+
+            let page = 0;
+
+            switch (reaction.emoji.name) {
+              case "🧍":
+                data = getData("character", page);
+
+                if(!data) {
+                  m.edit("This user does not have any favourite characters! :x:");
+                  return m.reactions.removeAll();
+                }
+                
+                
+                await m.delete();
+
+                let aEmbed = new MessageEmbed()
+                .setTitle(`${response.name}'s favourite character`)
+                .setThumbnail(data.image.large)
+                .setDescription("**" + data.name.userPreferred + "**\n" + sanitizeHtml(data.description))
+                .setTimestamp()
+                .setColor("#5865F2")
+                .setFooter(`page ${page + 1}/${response.favourites.anime.nodes.length}`)
+
+                return message.channel.send(aEmbed).then(mes => {
+                  mes.react("⬅️");
+                  mes.react("➡️");
+
+                  const filter = (reac, use ) => {
+                    return use.id == message.author.id && ["⬅️", "➡️"].includes(reac.emoji.name);
+                  }
+                });
+                break;
+
+              case "📚":
+                data = getData("manga", page);
+
+                await m.delete();
+
+                console.log(data);
+                break;
+
+              case "🎥":
+                data = getData("anime", page);
+
+                await m.delete();
+
+                console.log(data);
+                break;
+            }
+          });
+        });
       })
       .catch((err) => {
         console.log(err);
