@@ -160,6 +160,7 @@ module.exports = {
       return new Promise(async(resolve,reject)=>{
         if(data.length == 0) return undefined;
         let chosen = getItemFromAnilist()
+        console.log(quizLinks[chosen])
         let link = quizLinks[chosen].filter(v=>v.type==1) // SETS IF OPENING OR ENDING
         console.log(link)
         if(!link) {
