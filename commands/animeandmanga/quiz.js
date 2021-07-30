@@ -3,6 +3,8 @@ let { MessageEmbed } = require("discord.js");
 const User = require("../../models/User");
 
 const baseUrl = require("../../data/apiLinks.json").anime.baseUrl;
+const quizLinks = require("../../data/quiz.json")
+
 let data = [];
 module.exports = {
   name: "quiz",
@@ -36,7 +38,8 @@ module.exports = {
             entries {
               media {
                 title {
-                  romaji
+                  romaji,
+                  english
                 }
               }
             }
@@ -71,9 +74,9 @@ module.exports = {
 
       if(data.length == 0) return message.channel.send(":x: You appear to have no completed or watching anime on your profile")
 
-      let vid = await getVid()
+      let vid = await getFromList()
       while (vid == false) {
-        vid = await getVid()
+        vid = await getFromList()
       }
       if(vid == undefined){
         return message.channel.send(":) Game over")
@@ -96,25 +99,35 @@ module.exports = {
       })
     }
 
+    function getItemFromAnilist(){
+      let chosen
+      let list = Math.floor(Math.random() * (data.length - 1)); // get random list
+      try {
+        chosen =
+          data[list].entries[
+            Math.floor(Math.random() * (data[list].entries.length - 1))
+          ].media.title.english; // get random entry
+      let itemIndex = data.indexOf(data[list].entries[
+        Math.floor(Math.random() * (data[list].entries.length - 1))
+      ])
+      data.splice(itemIndex)
+    }
+    catch (e){
+      console.error(e.message)
+    }
+    return chosen
+    }
+
     /**
-     * Get vid link by name from list
+     * Get vid link FROM ANIMETHEMES by name from list
      * returns undefined if list is empty
      * returns false if nothing found
      * returns object if link
      */
     async function getVid(){
       if(data.length == 0) return undefined
-      let list = Math.floor(Math.random() * (data.length - 1)); // get random list
-      try {
-        let chosen =
-          data[list].entries[
-            Math.floor(Math.random() * (data[list].entries.length - 1))
-          ].media.title.romaji; // get random entry
-      let itemIndex = data.indexOf(data[list].entries[
-        Math.floor(Math.random() * (data[list].entries.length - 1))
-      ])
-      data.splice(itemIndex)
-        
+      try{
+        let chosen = getItemFromAnilist()
           const res = await axios.get(
           `https://staging.animethemes.moe/api/search/?q=${escape(chosen)}`
         ); // request video
@@ -138,6 +151,23 @@ module.exports = {
         message.channel.send("neco se posralo");
         message.channel.send(error.message);
       }
+    }
+
+    /**
+     * Gets link from the JSON list
+     */
+    async function getFromList(){
+      return new Promise(async(resolve,reject)=>{
+        if(data.length == 0) return undefined;
+        let chosen = getItemFromAnilist()
+        let link = quizLinks[chosen]
+        console.log(link)
+        if(!link) {
+          let newl = await getVid();
+          resolve(newl)
+        }
+        else resolve({link:link[0],name:chosen})
+      })
     }
   },
 };
