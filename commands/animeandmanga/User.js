@@ -189,7 +189,7 @@ module.exports = {
                 .setDescription("**" + data.name.userPreferred + "**\n" + sanitizeHtml(data.description))
                 .setTimestamp()
                 .setColor("#5865F2")
-                .setFooter(`page ${page}/${response.favourites.characters.nodes.length}`)
+                .setFooter(`page ${page + 1}/${response.favourites.characters.nodes.length}`)
 
                 return message.channel.send(aEmbed).then(mes => {
                   mes.react("⬅️");
@@ -208,7 +208,7 @@ module.exports = {
                     .setDescription("**" + dataC.name.userPreferred + "**\n" + sanitizeHtml(dataC.description))
                     .setTimestamp()
                     .setColor("#5865F2")
-                    .setFooter(`page ${page}/${response.favourites.characters.nodes.length}`)
+                    .setFooter(`page ${page + 1}/${response.favourites.characters.nodes.length}`)
                     .setThumbnail(dataC.image.large)
                     
                     me.edit(newEmbed);
@@ -279,7 +279,7 @@ module.exports = {
                       { name: "Volumes", value: dataC.volumes == null ? "No volumes" : dataC.volumes, inline: true },
                       { name: "Favourites", value: dataC.favourites == null ? "No favourites" : dataC.favourites, inline: true }
                     )
-                    .setDescription(`**${data.title.userPreferred}**\n${sanitizeHtml(data.description)}`)
+                    .setDescription(`**${dataC.title.userPreferred}**\n${sanitizeHtml(dataC.description)}`)
                     .setColor("#5865F2")
                     .setFooter(`page ${page + 1}/${response.favourites.manga.nodes.length}`)
                     .setThumbnail(dataC.coverImage.extraLarge)
