@@ -163,7 +163,7 @@ module.exports = {
         console.log(quizLinks[chosen])
         let link = quizLinks[chosen].filter(v=>v.type==1) // SETS IF OPENING OR ENDING
         console.log(link)
-        if(!link) {
+        if(link.length == 0) {
           let newl = await getVid();
           resolve(newl)
         }
