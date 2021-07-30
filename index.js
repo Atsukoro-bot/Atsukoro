@@ -153,8 +153,8 @@ app.post("/commands", (req, res) => {
   return res.json(webApiCommandCollection);
 });
 
-app.listen((process.env.PORT || 3000), () => {
-  console.log(`${chalk.green("[ WEB ]")} Api ready!`)
+app.listen(process.env.PORT || 3000, () => {
+  console.log(`${chalk.green("[ WEB ]")} Api ready!`);
 });
 
 // Load the token from the .env file and log in to Discord.

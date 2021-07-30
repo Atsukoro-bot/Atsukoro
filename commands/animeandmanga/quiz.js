@@ -3,7 +3,7 @@ let { MessageEmbed } = require("discord.js");
 const User = require("../../models/User");
 
 const baseUrl = require("../../data/apiLinks.json").anime.baseUrl;
-const quizLinks = require("../../data/quiz.json")
+const quizLinks = require("../../data/quiz.json");
 
 let data = [];
 module.exports = {
@@ -57,7 +57,7 @@ module.exports = {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Accept: "application/json",
+            "Accept": "application/json",
           },
           data: {
             query: query,
@@ -72,50 +72,55 @@ module.exports = {
           (l.status == "COMPLETED" || l.status == "CURRENT") && !l.isCustomList // filter all non-custom lists which are completed or current
       );
 
-      if(data.length == 0) return message.channel.send(":x: You appear to have no completed or watching anime on your profile")
+      if (data.length == 0)
+        return message.channel.send(
+          ":x: You appear to have no completed or watching anime on your profile"
+        );
 
-      let vid = await getFromList()
+      let vid = await getFromList();
       while (vid == false) {
-        vid = await getFromList()
+        vid = await getFromList();
       }
-      if(vid == undefined){
-        return message.channel.send(":) Game over")
+      if (vid == undefined) {
+        return message.channel.send(":) Game over");
       }
-      
-      console.log(vid.name.toLowerCase())
-      message.channel.send(vid.link).then(m=>{
-        const filter = e=>e.author.id == message.author.id
-        let collector = message.channel.createMessageCollector(filter,{time:15000})
-        collector.on('collect',me=>{
-          console.log(me.content == vid.name.toLowerCase())
-          if(me.content == vid.name || me.content == vid.name.toLowerCase()){
-            message.channel.send("correct")
-          }
-        })
-        collector.on('end',me=>{
-          message.channel.send("Correct answer: "+ vid.name)
-        })
 
-      })
+      console.log(vid.name.toLowerCase());
+      message.channel.send(vid.link).then((m) => {
+        const filter = (e) => e.author.id == message.author.id;
+        let collector = message.channel.createMessageCollector(filter, {
+          time: 15000,
+        });
+        collector.on("collect", (me) => {
+          console.log(me.content == vid.name.toLowerCase());
+          if (me.content == vid.name || me.content == vid.name.toLowerCase()) {
+            message.channel.send("correct");
+          }
+        });
+        collector.on("end", (me) => {
+          message.channel.send("Correct answer: " + vid.name);
+        });
+      });
     }
 
-    function getItemFromAnilist(){
-      let chosen
+    function getItemFromAnilist() {
+      let chosen;
       let list = Math.floor(Math.random() * (data.length - 1)); // get random list
       try {
         chosen =
           data[list].entries[
             Math.floor(Math.random() * (data[list].entries.length - 1))
           ].media.title.english; // get random entry
-      let itemIndex = data.indexOf(data[list].entries[
-        Math.floor(Math.random() * (data[list].entries.length - 1))
-      ])
-      data.splice(itemIndex)
-    }
-    catch (e){
-      console.error(e.message)
-    }
-    return chosen
+        let itemIndex = data.indexOf(
+          data[list].entries[
+            Math.floor(Math.random() * (data[list].entries.length - 1))
+          ]
+        );
+        data.splice(itemIndex);
+      } catch (e) {
+        console.error(e.message);
+      }
+      return chosen;
     }
 
     /**
@@ -124,29 +129,34 @@ module.exports = {
      * returns false if nothing found
      * returns object if link
      */
-    async function getVid(){
-      if(data.length == 0) return undefined
-      try{
-        let chosen = getItemFromAnilist()
-          const res = await axios.get(
+    async function getVid() {
+      if (data.length == 0) return undefined;
+      try {
+        let chosen = getItemFromAnilist();
+        const res = await axios.get(
           `https://staging.animethemes.moe/api/search/?q=${escape(chosen)}`
         ); // request video
-        
-        if(res.status > 404) return 500
-        if(!res.data.search.anime[0]) return false
-        
-        let slug = res.data.search.anime[0].slug
-        let videos = res.data.search.themes.filter(v=>v.type == "OP")
-        console.log(videos.length)
-        if(res.data.search.themes.length == 0 || videos.length == 0) return false
-        
-        const vidReq = await axios.get(`https://staging.animethemes.moe/wiki/anime/${slug}/${videos[0].slug}`)
-          console.log(`https://staging.animethemes.moe/wiki/anime/${slug}/${videos[0].slug}`)
-        let vidRegEx = /<video src="[a-zA-Z\/:\.\-0-9]+/gm
-        let link = vidRegEx.exec(vidReq.data)[0]
-        if(!link) return false
-        
-        return {link:link.replace("<video src=\"",""),name:chosen}
+
+        if (res.status > 404) return 500;
+        if (!res.data.search.anime[0]) return false;
+
+        let slug = res.data.search.anime[0].slug;
+        let videos = res.data.search.themes.filter((v) => v.type == "OP");
+        console.log(videos.length);
+        if (res.data.search.themes.length == 0 || videos.length == 0)
+          return false;
+
+        const vidReq = await axios.get(
+          `https://staging.animethemes.moe/wiki/anime/${slug}/${videos[0].slug}`
+        );
+        console.log(
+          `https://staging.animethemes.moe/wiki/anime/${slug}/${videos[0].slug}`
+        );
+        let vidRegEx = /<video src="[a-zA-Z\/:\.\-0-9]+/gm;
+        let link = vidRegEx.exec(vidReq.data)[0];
+        if (!link) return false;
+
+        return { link: link.replace('<video src="', ""), name: chosen };
       } catch (error) {
         message.channel.send("neco se posralo");
         message.channel.send(error.message);
@@ -156,19 +166,23 @@ module.exports = {
     /**
      * Gets link from the JSON list
      */
-    async function getFromList(){
-      return new Promise(async(resolve,reject)=>{
-        if(data.length == 0) return undefined;
-        let chosen = getItemFromAnilist()
-        console.log(quizLinks[chosen])
-        let link = quizLinks[chosen].filter(v=>v.type==1) // SETS IF OPENING OR ENDING
-        console.log(link)
-        if(link.length == 0) {
+    async function getFromList() {
+      return new Promise(async (resolve, reject) => {
+        if (data.length == 0) return undefined;
+        let chosen = getItemFromAnilist();
+        console.log(quizLinks[chosen]);
+        if (!quizLinks[chosen]) {
           let newl = await getVid();
-          resolve(newl)
+          resolve(newl);
+          return;
         }
-        else resolve({link:link[0].link,name:chosen})
-      })
+        let link = quizLinks[chosen].filter((v) => v.type == 1); // SETS IF OPENING OR ENDING
+        console.log(chosen);
+        if (link.length == 0) {
+          let newl = await getVid();
+          resolve(newl);
+        } else resolve({ link: link[0].link, name: chosen });
+      });
     }
   },
 };
