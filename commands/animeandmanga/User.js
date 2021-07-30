@@ -189,7 +189,7 @@ module.exports = {
                 .setDescription("**" + data.name.userPreferred + "**\n" + sanitizeHtml(data.description))
                 .setTimestamp()
                 .setColor("#5865F2")
-                .setFooter(`page ${page}/${response.favourites.character.nodes.length}`)
+                .setFooter(`page ${page}/${response.favourites.characters.nodes.length}`)
 
                 return message.channel.send(aEmbed).then(mes => {
                   mes.react("⬅️");
@@ -208,7 +208,7 @@ module.exports = {
                     .setDescription("**" + dataC.name.userPreferred + "**\n" + sanitizeHtml(dataC.description))
                     .setTimestamp()
                     .setColor("#5865F2")
-                    .setFooter(`page ${page}/${response.favourites.character.nodes.length}`)
+                    .setFooter(`page ${page}/${response.favourites.characters.nodes.length}`)
                     .setThumbnail(dataC.image.large)
                     
                     me.edit(newEmbed);
@@ -309,7 +309,6 @@ module.exports = {
 
               case "🎥":
                 data = getData("anime", page);
-                console.log(data);
 
                 await m.delete();
 
