@@ -8,7 +8,7 @@ module.exports = {
   description: "Get specific user!",
   perms: [],
   timeout: 5000,
-  category: "Utility",
+  category: "Anime & Manga",
   execute: async function (message, args, commands) {
 
     if(!args[0]) return message.channel.send("Please send the name of the user you want to find! :x:");
@@ -189,7 +189,7 @@ module.exports = {
                 .setDescription("**" + data.name.userPreferred + "**\n" + sanitizeHtml(data.description))
                 .setTimestamp()
                 .setColor("#5865F2")
-                .setFooter(`page ${page}/${response.favourites.anime.nodes.length}`)
+                .setFooter(`page ${page}/${response.favourites.character.nodes.length}`)
 
                 return message.channel.send(aEmbed).then(mes => {
                   mes.react("⬅️");
@@ -208,7 +208,7 @@ module.exports = {
                     .setDescription("**" + dataC.name.userPreferred + "**\n" + sanitizeHtml(dataC.description))
                     .setTimestamp()
                     .setColor("#5865F2")
-                    .setFooter(`page ${page}/${response.favourites.anime.nodes.length}`)
+                    .setFooter(`page ${page}/${response.favourites.character.nodes.length}`)
                     .setThumbnail(dataC.image.large)
                     
                     me.edit(newEmbed);
@@ -232,20 +232,149 @@ module.exports = {
                 });
                 break;
 
+
+
               case "📚":
+
                 data = getData("manga", page);
 
+                if(!data) {
+                  m.edit("This user does not have any manga in the favourites! :x:");
+                  return m.reactions.removeAll();
+                }
+                
+                
                 await m.delete();
 
-                console.log(data);
+                let mEmbed = new MessageEmbed()
+                .setTitle(`${response.name}'s favourite manga`)
+                .setThumbnail(data.coverImage.extraLarge)
+                .setDescription(`**${data.title.userPreferred}**\n${sanitizeHtml(data.description)}`)
+                .addFields(
+                  { name: "Chapters", value: data.chapters == null ? "No chapters" : data.chapters, inline: true },
+                  { name: "Volumes", value: data.volumes == null ? "No volumes" : data.volumes, inline: true },
+                  { name: "Favourites", value: data.favourites == null ? "No favourites" : data.favourites, inline: true }
+                )
+                .setTimestamp()
+                .setColor("#5865F2")
+                .setFooter(`page ${page + 1}/${response.favourites.manga.nodes.length}`)
+
+                return message.channel.send(mEmbed).then(mes => {
+                  mes.react("⬅️");
+                  mes.react("➡️");
+
+                  const filter = (reac, use) => {
+                    return use.id == message.author.id && ["⬅️", "➡️"].includes(reac.emoji.name);
+                  }
+
+                  const col = mes.createReactionCollector(filter, { time: 120000 });
+
+                  function editEmbed(me, page) {
+                    dataC = getData("manga", page);
+                    let newEmbed = new MessageEmbed()
+                    .setTitle(`${response.name}'s favourite characters`)
+                    .setTimestamp()
+                    .addFields(
+                      { name: "Chapters", value: dataC.chapters == null ? "No chapters" : dataC.chapters, inline: true },
+                      { name: "Volumes", value: dataC.volumes == null ? "No volumes" : dataC.volumes, inline: true },
+                      { name: "Favourites", value: dataC.favourites == null ? "No favourites" : dataC.favourites, inline: true }
+                    )
+                    .setDescription(`**${data.title.userPreferred}**\n${sanitizeHtml(data.description)}`)
+                    .setColor("#5865F2")
+                    .setFooter(`page ${page + 1}/${response.favourites.manga.nodes.length}`)
+                    .setThumbnail(dataC.coverImage.extraLarge)
+                    
+                    me.edit(newEmbed);
+                  }
+
+                  col.on("collect", (react, use) => {
+                    switch (react.emoji.name) {
+                      case "⬅️":
+                        if(page == 0) return;
+                        page--;
+                        editEmbed(mes, page);
+                        break;
+                    
+                      default:
+                        if((response.favourites.manga.nodes.length - 1) == page) return;
+                        page++;
+                        editEmbed(mes, page);
+                        break;
+                    }
+                  })
+                });
                 break;
+
+
 
               case "🎥":
                 data = getData("anime", page);
+                console.log(data);
 
                 await m.delete();
 
-                console.log(data);
+                if(!data) {
+                  m.edit("This user does not have any anime in the favourites! :x:");
+                  return m.reactions.removeAll();
+                }
+
+                let anEmbed = new MessageEmbed()
+                .setTitle(`${response.name}'s favourite anime`)
+                .setThumbnail(data.coverImage.extraLarge)
+                .setDescription(`**${data.title.userPreferred}**\n${sanitizeHtml(data.description)}`)
+                .addFields(
+                  { name: "Average scores", value: data.averageScore == null ? "No average score" : data.averageScore, inline: true },
+                  { name: "Episodes", value: data.episodes == null ? "No episodes" : data.episodes, inline: true },
+                  { name: "Favourites", value: data.favourites == null ? "No favourites" : data.favourites, inline: true }
+                )
+                .setTimestamp()
+                .setColor("#5865F2")
+                .setFooter(`page ${page + 1}/${response.favourites.anime.nodes.length}`)
+
+                return message.channel.send(anEmbed).then(mes => {
+                  mes.react("⬅️");
+                  mes.react("➡️");
+
+                  const filter = (reac, use) => {
+                    return use.id == message.author.id && ["⬅️", "➡️"].includes(reac.emoji.name);
+                  }
+
+                  const col = mes.createReactionCollector(filter, { time: 120000 });
+
+                  function editEmbed(me, page) {
+                    dataC = getData("anime", page);
+                    let newEmbed = new MessageEmbed()
+                    .setTitle(`${response.name}'s favourite characters`)
+                    .setTimestamp()
+                    .addFields(
+                      { name: "Average scores", value: dataC.averageScore == null ? "No average score" : dataC.averageScore, inline: true },
+                      { name: "Episodes", value: dataC.episodes == null ? "No episodes" : dataC.episodes, inline: true },
+                      { name: "Favourites", value: dataC.favourites == null ? "No favourites" : dataC.favourites, inline: true }
+                    )
+                    .setDescription(`**${data.title.userPreferred}**\n${sanitizeHtml(data.description)}`)
+                    .setColor("#5865F2")
+                    .setFooter(`page ${page + 1}/${response.favourites.anime.nodes.length}`)
+                    .setThumbnail(dataC.coverImage.extraLarge)
+                    
+                    me.edit(newEmbed);
+                  }
+
+                  col.on("collect", (react, use) => {
+                    switch (react.emoji.name) {
+                      case "⬅️":
+                        if(page == 0) return;
+                        page--;
+                        editEmbed(mes, page);
+                        break;
+                    
+                      default:
+                        if((response.favourites.manga.nodes.length - 1) == page) return;
+                        page++;
+                        editEmbed(mes, page);
+                        break;
+                    }
+                  })
+                });
                 break;
             }
           });
