@@ -167,7 +167,7 @@ module.exports = {
           let newl = await getVid();
           resolve(newl)
         }
-        else resolve({link:link[0],name:chosen})
+        else resolve({link:link[0].link,name:chosen})
       })
     }
   },
