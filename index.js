@@ -149,7 +149,7 @@ client.on("message", async (message) => {
 process.on("uncaughtException", console.log);
 
 // Start the web server
-app.post("/commands", (req, res) => {
+app.get("/commands", (req, res) => {
   return res.json(webApiCommandCollection);
 });
 
