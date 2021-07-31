@@ -95,7 +95,18 @@ module.exports = {
       voiceChannel.join().then((connection) => { // joins voice channel
         console.log(vid.name.toLowerCase());
         var points = 0;
-        connection.play(vid.link); // plays in voice
+        if(vid.link.split(".").pop() == "webm"){
+          axios({
+            method: 'get',
+            url: vid.link,
+            responseType: 'stream'
+          })
+            .then(function (response) {
+              connection.play(response.data,{ type: 'webm/opus' }) //plays webm in voice
+            });
+        } else {
+          connection.play(vid.link); // plays in voice
+        }
 
         const filter = (e) => e.author.id == message.author.id;
         let collector = message.channel.createMessageCollector(filter, {
