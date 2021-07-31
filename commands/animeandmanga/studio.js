@@ -79,6 +79,24 @@ module.exports = {
           function getMedia(page) {
             return result.media.nodes[page];
           }
+
+          function sanitizeHtml(text) {
+            text = text.replace(new RegExp("<[^>]*>", "g"), "");
+            text = text.replace("&quot;", "");
+            text = text.split("").splice(0, 1000).join("");
+            return text;
+          };
+
+          function editEmbed(message, data) {
+            let editedEmbed = new MessageEmbed()
+            .setTimestamp()
+            .setTitle(data.title.userPreferred)
+            .setThumbnail(data.coverImage.extraLarge)
+            .setDescription(sanitizeHtml(data.description))
+            .setColor("#5865F2")
+
+            message.edit(editedEmbed);
+          }
   
           const mainFilter = (reaction, user) => {
             return user.id == message.author.id && reaction.emoji.name == "🎥";
@@ -86,14 +104,51 @@ module.exports = {
   
           const mainCollector = m.createReactionCollector(mainFilter, { time: 60000, max: 1 });
   
-          mainCollector.on("collect", (reaction, user) => {
-  
+          mainCollector.on("collect", async (reaction, user) => {
+            mainCollector.stop();
+            await m.reactions.removeAll();
+
             let page = 0;
   
-            mainCollector.stop();
-  
             data = getMedia(page);
-            console.log(data);
+
+            let mediaEmbed = new MessageEmbed()
+            .setTimestamp()
+            .setTitle(data.title.userPreferred)
+            .setThumbnail(data.coverImage.extraLarge)
+            .setDescription(sanitizeHtml(data.description))
+            .setColor("#5865F2")
+
+            return m.edit(mediaEmbed).then(m => {
+              m.react("⬅");
+              m.react("➡️");
+
+              const  pageFilter = (reaction, user) => {
+                return user.id == message.author.id && ["⬅", "➡️"].includes(reaction.emoji.name)
+              }
+
+              const pageCollector = m.createReactionCollector(pageFilter, { time: 60000 });
+
+              pageCollector.on("collect", (reaction, user) => {
+                switch(reaction.emoji.name) {
+                  case "⬅":
+                    if(page == 0) page = result.media.nodes.length - 1;
+                    page--;
+                    data = getMedia(page);
+
+                    editEmbed(m, data);
+                  break;
+
+                  case "➡️":
+                    if((page + 1) == result.media.nodes.length) page = -1;
+                    page++;
+                    data = getMedia(page);
+
+                    editEmbed(m, data);
+                  break;
+                }
+              })
+            });
           });
         });
       })
