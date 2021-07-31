@@ -14,7 +14,4 @@ npm i
 npm run dev
 ```
 
-Also fill your .env file with those variables:
-TOKEN=YOURDISCORDBOTTOKEN
-MONGOURI=MONGODBDATABASEURI
-
+Also fill your .env file with those variables: TOKEN=YOURDISCORDBOTTOKEN MONGOURI=MONGODBDATABASEURI

@@ -13,6 +13,7 @@
   "author": "kebab",
   "license": "ISC",
   "dependencies": {
+    "@discordjs/opus": "^0.5.3",
     "anime-quotes-api": "^1.2.0",
     "axios": "^0.21.1",
     "canvas": "^2.8.0",
@@ -20,7 +21,8 @@
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "mongoose": "^5.13.3",
-    "nodemon": "^2.0.12"
+    "nodemon": "^2.0.12",
+    "opusscript": "0.0.8"
   },
   "devDependencies": {
     "husky": "^7.0.1",

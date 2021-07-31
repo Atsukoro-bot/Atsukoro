@@ -57,7 +57,7 @@ module.exports = {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Accept: "application/json",
+        "Accept": "application/json",
       },
       data: {
         query: query,
@@ -105,123 +105,166 @@ module.exports = {
             },
             { name: "Season", value: response.season, inline: true }
           )
-          .setFooter("🧍 - Display all characters")
+          .setFooter("🧍 - Display all characters");
 
-        return message.channel.send(embed)
-        .then(m => {
+        return message.channel
+          .send(embed)
+          .then((m) => {
+            function getData(type, page) {
+              switch (type) {
+                case "characters":
+                  return response.characters.nodes[page];
+                  break;
 
-          function getData(type, page) {
-            switch (type) {
-              case "characters":
-                return response.characters.nodes[page];
-              break;
-
-              case "staff":
-                return response.staff.nodes[page];
-              break;
-            };
-          };
-
-          function sanitizeHtml(text) {
-            text = text.replace(new RegExp("<[^>]*>", "g"), "");
-            text = text.replace("&quot;", "");
-            text = text.split("").splice(0, 1000).join("");
-            return text;
-          };
-
-          function editEmbed(type, messageToEdit, data) {
-            switch (type) {
-              case "characters":
-                newEmbed = new MessageEmbed()
-                .setAuthor(data.name.userPreferred)
-                .setThumbnail(data.image.large)
-                .setColor("#5865F2")
-                .setDescription(sanitizeHtml(data.description))
-                .addFields(
-                  { name: "Gender", value: data.gender == null ? "Unknown" : data.gender, inline: true },
-                  { name: "Age", value: data.age == null ? "Unknown" : data.age, inline: true },
-                  { name: "Favourites", value: data.favourites == null ? "Unknown" : data.favourites, inline: true }
-                )
-                .setFooter(`page ${page + 1} / ${response.characters.nodes.length}`);
-                
-                messageToEdit.edit(newEmbed);
-              break;
-
-              case "staff":
-
-              break;
-            };
-          };
-
-          m.react("🧍");
-
-          const filter = (reaction, user) => {
-            return user.id === message.author.id && ["🧍"].includes(reaction.emoji.name);
-          }
-
-          const collector = m.createReactionCollector(filter, { time: 120000, max: 1 });
-
-          let page = 0;
-
-          collector.on("collect", async (reaction, user) => {
-            await collector.stop();
-            switch(reaction.emoji.name) {
-              case "🧍":
-                // Display characters from anime
-
-                data = getData("characters", page);
-
-                if(!data) return message.edit("No characters found!");
-                
-                let characterEmbed = new MessageEmbed()
-                .setAuthor(data.name.userPreferred)
-                .setThumbnail(data.image.large)
-                .setColor("#5865F2")
-                .setDescription(sanitizeHtml(data.description))
-                .addFields(
-                  { name: "Gender", value: data.gender == null ? "Unknown" : data.gender, inline: true },
-                  { name: "Age", value: data.age == null ? "Unknown" : data.age, inline: true },
-                  { name: "Favourites", value: data.favourites == null ? "Unknown" : data.favourites, inline: true }
-                )
-                .setFooter(`page ${page + 1} / ${response.characters.nodes.length}`);
-
-                return m.edit(characterEmbed).then(async (m) => {
-                  await m.reactions.removeAll();
-
-                  await m.react("⬅️");
-                  await m.react("➡️");   
-
-                  pageFilter = (reaction, user) => {
-                    return user.id === message.author.id && ["⬅️", "➡️"].includes(reaction.emoji.name);
-                  }
-
-                  const pageCollector = m.createReactionCollector(pageFilter, { time: 120000 });
-
-                  pageCollector.on("collect", async (reaction, user) => {
-                    switch(reaction.emoji.name) {
-                      case "⬅️":
-                        if(page == 0) page = response.characters.nodes.length;
-                        page--;
-                        data = getData("characters", page);
-                        editEmbed("characters", m, data);
-                        break;
-
-                      case "➡️":
-                        if(response.characters.nodes.length == (page + 1)) page = -1;
-                        page++;
-                        data = getData("characters", page);
-                        editEmbed("characters", m, data);
-                        break;
-                    };
-                  });
-                });
-                break;
+                case "staff":
+                  return response.staff.nodes[page];
+                  break;
+              }
             }
+
+            function sanitizeHtml(text) {
+              text = text.replace(new RegExp("<[^>]*>", "g"), "");
+              text = text.replace("&quot;", "");
+              text = text.split("").splice(0, 1000).join("");
+              return text;
+            }
+
+            function editEmbed(type, messageToEdit, data) {
+              switch (type) {
+                case "characters":
+                  newEmbed = new MessageEmbed()
+                    .setAuthor(data.name.userPreferred)
+                    .setThumbnail(data.image.large)
+                    .setColor("#5865F2")
+                    .setDescription(sanitizeHtml(data.description))
+                    .addFields(
+                      {
+                        name: "Gender",
+                        value: data.gender == null ? "Unknown" : data.gender,
+                        inline: true,
+                      },
+                      {
+                        name: "Age",
+                        value: data.age == null ? "Unknown" : data.age,
+                        inline: true,
+                      },
+                      {
+                        name: "Favourites",
+                        value:
+                          data.favourites == null ? "Unknown" : data.favourites,
+                        inline: true,
+                      }
+                    )
+                    .setFooter(
+                      `page ${page + 1} / ${response.characters.nodes.length}`
+                    );
+
+                  messageToEdit.edit(newEmbed);
+                  break;
+
+                case "staff":
+                  break;
+              }
+            }
+
+            m.react("🧍");
+
+            const filter = (reaction, user) => {
+              return (
+                user.id === message.author.id &&
+                ["🧍"].includes(reaction.emoji.name)
+              );
+            };
+
+            const collector = m.createReactionCollector(filter, {
+              time: 120000,
+              max: 1,
+            });
+
+            let page = 0;
+
+            collector.on("collect", async (reaction, user) => {
+              await collector.stop();
+              switch (reaction.emoji.name) {
+                case "🧍":
+                  // Display characters from anime
+
+                  data = getData("characters", page);
+
+                  if (!data) return message.edit("No characters found!");
+
+                  let characterEmbed = new MessageEmbed()
+                    .setAuthor(data.name.userPreferred)
+                    .setThumbnail(data.image.large)
+                    .setColor("#5865F2")
+                    .setDescription(sanitizeHtml(data.description))
+                    .addFields(
+                      {
+                        name: "Gender",
+                        value: data.gender == null ? "Unknown" : data.gender,
+                        inline: true,
+                      },
+                      {
+                        name: "Age",
+                        value: data.age == null ? "Unknown" : data.age,
+                        inline: true,
+                      },
+                      {
+                        name: "Favourites",
+                        value:
+                          data.favourites == null ? "Unknown" : data.favourites,
+                        inline: true,
+                      }
+                    )
+                    .setFooter(
+                      `page ${page + 1} / ${response.characters.nodes.length}`
+                    );
+
+                  return m.edit(characterEmbed).then(async (m) => {
+                    await m.reactions.removeAll();
+
+                    await m.react("⬅️");
+                    await m.react("➡️");
+
+                    pageFilter = (reaction, user) => {
+                      return (
+                        user.id === message.author.id &&
+                        ["⬅️", "➡️"].includes(reaction.emoji.name)
+                      );
+                    };
+
+                    const pageCollector = m.createReactionCollector(
+                      pageFilter,
+                      { time: 120000 }
+                    );
+
+                    pageCollector.on("collect", async (reaction, user) => {
+                      switch (reaction.emoji.name) {
+                        case "⬅️":
+                          if (page == 0)
+                            page = response.characters.nodes.length;
+                          page--;
+                          data = getData("characters", page);
+                          editEmbed("characters", m, data);
+                          break;
+
+                        case "➡️":
+                          if (response.characters.nodes.length == page + 1)
+                            page = -1;
+                          page++;
+                          data = getData("characters", page);
+                          editEmbed("characters", m, data);
+                          break;
+                      }
+                    });
+                  });
+                  break;
+              }
+            });
+          })
+          .catch((err) => {
+            return;
           });
-        })
-        .catch((err) => {
-          return;
-        });
       })
       .catch((err) => {
         let noFoundEmbed = new MessageEmbed()

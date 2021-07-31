@@ -40,7 +40,7 @@ module.exports = {
       `;
 
     var variables = {
-      search: args.join(" ")
+      search: args.join(" "),
     };
 
     axios({
@@ -70,12 +70,11 @@ module.exports = {
               inline: true,
             }
           )
-          .setFooter("🎥 - Display work that is done by this studio")
+          .setFooter("🎥 - Display work that is done by this studio");
 
-        return message.channel.send(embed)
-        .then(m => {
+        return message.channel.send(embed).then((m) => {
           m.react("🎥");
-  
+
           function getMedia(page) {
             return result.media.nodes[page];
           }
@@ -85,69 +84,77 @@ module.exports = {
             text = text.replace("&quot;", "");
             text = text.split("").splice(0, 1000).join("");
             return text;
-          };
+          }
 
           function editEmbed(message, data) {
             let editedEmbed = new MessageEmbed()
-            .setTimestamp()
-            .setTitle(data.title.userPreferred)
-            .setThumbnail(data.coverImage.extraLarge)
-            .setDescription(sanitizeHtml(data.description))
-            .setColor("#5865F2")
+              .setTimestamp()
+              .setTitle(data.title.userPreferred)
+              .setThumbnail(data.coverImage.extraLarge)
+              .setDescription(sanitizeHtml(data.description))
+              .setColor("#5865F2");
 
             message.edit(editedEmbed);
           }
-  
+
           const mainFilter = (reaction, user) => {
             return user.id == message.author.id && reaction.emoji.name == "🎥";
-          }
-  
-          const mainCollector = m.createReactionCollector(mainFilter, { time: 60000, max: 1 });
-  
+          };
+
+          const mainCollector = m.createReactionCollector(mainFilter, {
+            time: 60000,
+            max: 1,
+          });
+
           mainCollector.on("collect", async (reaction, user) => {
             mainCollector.stop();
             await m.reactions.removeAll();
 
             let page = 0;
-  
+
             data = getMedia(page);
 
             let mediaEmbed = new MessageEmbed()
-            .setTimestamp()
-            .setTitle(data.title.userPreferred)
-            .setThumbnail(data.coverImage.extraLarge)
-            .setDescription(sanitizeHtml(data.description))
-            .setColor("#5865F2")
+              .setTimestamp()
+              .setTitle(data.title.userPreferred)
+              .setThumbnail(data.coverImage.extraLarge)
+              .setDescription(sanitizeHtml(data.description))
+              .setColor("#5865F2");
 
-            return m.edit(mediaEmbed).then(m => {
+            return m.edit(mediaEmbed).then((m) => {
               m.react("⬅");
               m.react("➡️");
 
-              const  pageFilter = (reaction, user) => {
-                return user.id == message.author.id && ["⬅", "➡️"].includes(reaction.emoji.name)
-              }
+              const pageFilter = (reaction, user) => {
+                return (
+                  user.id == message.author.id &&
+                  ["⬅", "➡️"].includes(reaction.emoji.name)
+                );
+              };
 
-              const pageCollector = m.createReactionCollector(pageFilter, { time: 60000 });
+              const pageCollector = m.createReactionCollector(pageFilter, {
+                time: 60000,
+              });
 
               pageCollector.on("collect", (reaction, user) => {
-                switch(reaction.emoji.name) {
+                switch (reaction.emoji.name) {
                   case "⬅":
-                    if(page == 0) page = result.media.nodes.length - 1;
+                    if (page == 0) page = result.media.nodes.length - 1;
                     page--;
                     data = getMedia(page);
 
                     editEmbed(m, data);
-                  break;
+                    break;
 
                   case "➡️":
-                    if((page + 1) == result.media.nodes.length) page = -1;
+                    if (page + 1 == result.media.nodes.length) page = -1;
                     page++;
                     data = getMedia(page);
 
                     editEmbed(m, data);
-                  break;
+                    break;
                 }
-              })
+              });
             });
           });
         });

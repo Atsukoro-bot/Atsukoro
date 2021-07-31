@@ -77,29 +77,41 @@ module.exports = {
           ":x: You appear to have no completed or watching anime on your profile"
         );
 
-      let vid = await getFromList();
+      let vid = await getFromList(); // gets link
       while (vid == false) {
+        // if no link found, try another anime
         vid = await getFromList();
       }
       if (vid == undefined) {
+        // if is undefined means that there are no more animu
         return message.channel.send(":) Game over");
       }
 
-      console.log(vid.name.toLowerCase());
-      message.channel.send(vid.link).then((m) => {
+      let voiceChannel = message.member.voice.channel;
+      if (!voiceChannel.joinable)
+        return message.channel.send(
+          ":x: Cannot join your voice channel, check permissions"
+        );
+      voiceChannel.join().then((connection) => { // joins voice channel
+        console.log(vid.name.toLowerCase());
+        var points = 0;
+        connection.play(vid.link); // plays in voice
+
         const filter = (e) => e.author.id == message.author.id;
         let collector = message.channel.createMessageCollector(filter, {
           time: 15000,
         });
         collector.on("collect", (me) => {
-          console.log(me.content == vid.name.toLowerCase());
           if (me.content == vid.name || me.content == vid.name.toLowerCase()) {
             message.channel.send("correct");
           }
         });
         collector.on("end", (me) => {
           message.channel.send("Correct answer: " + vid.name);
+        connection.disconnect() // leave on end
+
         });
+
       });
     }
 
@@ -142,7 +154,6 @@ module.exports = {
 
         let slug = res.data.search.anime[0].slug;
         let videos = res.data.search.themes.filter((v) => v.type == "OP");
-        console.log(videos.length);
         if (res.data.search.themes.length == 0 || videos.length == 0)
           return false;
 
@@ -170,14 +181,12 @@ module.exports = {
       return new Promise(async (resolve, reject) => {
         if (data.length == 0) return undefined;
         let chosen = getItemFromAnilist();
-        console.log(quizLinks[chosen]);
         if (!quizLinks[chosen]) {
           let newl = await getVid();
           resolve(newl);
           return;
         }
         let link = quizLinks[chosen].filter((v) => v.type == 1); // SETS IF OPENING OR ENDING
-        console.log(chosen);
         if (link.length == 0) {
           let newl = await getVid();
           resolve(newl);
