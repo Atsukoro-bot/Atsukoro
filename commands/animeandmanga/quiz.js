@@ -4,7 +4,6 @@ const User = require("../../models/User");
 var ss = require("string-similarity");
 
 const baseUrl = require("../../data/apiLinks.json").anime.baseUrl;
-const quizLinks = require("../../data/quiz.json");
 
 let data = [];
 let wl = ["145973959127597057","724676555955241001","815210915510878228"]
