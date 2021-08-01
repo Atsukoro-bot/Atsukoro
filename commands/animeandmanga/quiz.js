@@ -1,6 +1,7 @@
 const axios = require("axios").default;
 let { MessageEmbed } = require("discord.js");
 const User = require("../../models/User");
+var ss = require("string-similarity");
 
 const baseUrl = require("../../data/apiLinks.json").anime.baseUrl;
 const quizLinks = require("../../data/quiz.json");
@@ -30,70 +31,15 @@ module.exports = {
       });
       // end anilist username
     } else {
-      // start anilist API request
-      let query = `query($username:String){
-        MediaListCollection(userName:$username, type:ANIME){
-          lists {
-            isSplitCompletedList,
-            isCustomList
-            status,
-            entries {
-              media {
-                title {
-                  romaji,
-                  english
-                }
-              }
-            }
-          }
-        }
-      }`;
       let db = await User.findOne({ id: message.author.id });
       if (!db)
         return message.channel.send(
-          ":x: Set your Anilist username using the `ak.anilist set <yourusername>` command"
+          ":x: Set your Anilist username using the `ak.quiz set <yourusername>` command"
         );
       let user = db.anilist;
       if (!user) return;
-      let vars = {
-        username: user,
-      };
-      data = (
-        await axios({
-          url: baseUrl,
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-          },
-          data: {
-            query: query,
-            variables: vars,
-          },
-        })
-      ).data.data.MediaListCollection.lists; // save user's lists
-      // end anilist api request
-
-      data = data.filter(
-        (l) =>
-          (l.status == "COMPLETED" || l.status == "CURRENT") && !l.isCustomList // filter all non-custom lists which are completed or current
-      );
-
-      if (data.length == 0)
-        return message.channel.send(
-          ":x: You appear to have no completed or watching anime on your profile"
-        );
-
-      let vid = await getFromList(); // gets link
-      while (vid == false) {
-        // if no link found, try another anime
-        vid = await getFromList();
-      }
-      if (vid == undefined) {
-        // if is undefined means that there are no more animu
-        return message.channel.send(":) Game over");
-      }
-
+      
+      let vid = await getVid(user);
       let voiceChannel = message.member.voice.channel;
       if (!voiceChannel)
         return message.channel.send(":x: You are not in a voice channel");
@@ -103,7 +49,7 @@ module.exports = {
         );
       voiceChannel.join().then((connection) => {
         // joins voice channel
-        console.log(vid.name.english.toLowerCase());
+        console.log(vid.name.toLowerCase());
         var points = 0;
         if (vid.link.split(".").pop() == "webm") {
           axios({
@@ -116,138 +62,42 @@ module.exports = {
         } else {
           connection.play(vid.link); // plays in voice
         }
-
+        message.channel.send("Quiz started in " + `<#${voiceChannel.id}>`)
         const filter = (e) => e.author.id == message.author.id;
         let collector = message.channel.createMessageCollector(filter, {
-          time: 15000,
+          time: 20000,
         });
         collector.on("collect", (me) => {
-          if (me.content.toLowerCase() == vid.name.english.toLowerCase() || me.content.toLowerCase() == vid.name.romaji.toLowerCase()) {
-            message.channel.send("correct");
+          var similarity = ss.compareTwoStrings(me.content.toLowerCase(), vid.name.toLowerCase());
+          if (similarity > 0.8) {
+            me.react("✅")
           }
         });
         collector.on("end", (me) => {
-          message.channel.send("Correct answer: " + vid.name.english);
+          message.channel.send("Correct answer: " + vid.name);
           connection.disconnect(); // leave on end
         });
       });
     }
 
-    async function getItemFromAnilist() {
-      let chosen;
-      let list = Math.floor(Math.random() * (data.length - 1)); // get random list
-      try {
-        chosen =
-          data[list].entries[
-            Math.floor(Math.random() * (data[list].entries.length - 1))
-          ].media.title.english; // get random entry
-        let itemIndex = data.indexOf(
-          data[list].entries[
-            Math.floor(Math.random() * (data[list].entries.length - 1))
-          ]
-        );
-        data.splice(itemIndex);
-      } catch (e) {
-        console.error(e.message);
-      }
-      let query = `query($name:String){
-        Media(search:$name){
-          title{
-            english,
-            romaji
-          }
-        }
-      }`;
-      let vars = { name: chosen };
-      let titles = ( // gets romaji and english title
-        await axios({
-          url: baseUrl,
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-          },
-          data: {
-            query: query,
-            variables: vars,
-          },
-        })
-      ).data.data.Media.title;
-      return titles;
-    }
+   
 
     /**
-     * Get vid link FROM ANIMETHEMES by name from list
-     * returns undefined if list is empty
-     * returns false if nothing found
-     * returns object if link
+     * Get vid link FROM https://themes.moe/api/
+     * @returns video object
      */
-    async function getVid(chosen) {
-      if (data.length == 0) return undefined;
-      let link;
-      try {
-        //let chosen = getItemFromAnilist();
-        const res = await axios.get(
-          `https://staging.animethemes.moe/api/search/?q=${escape(chosen.english)}`
-        ); // request video
-
-        if (res.status > 404) return 500;
-        if (!res.data.search.anime[0]) return false;
-
-        let slug = res.data.search.anime[0].slug;
-        let videos = res.data.search.themes.filter((v) => v.type == "OP");
-        if (res.data.search.themes.length == 0 || videos.length == 0)
-          return false;
-        console.log(
-          `[QUIZ] https://staging.animethemes.moe/wiki/anime/${slug}/${videos[0].slug}`
-        );
-        const vidReq = await axios.get(
-          `https://staging.animethemes.moe/wiki/anime/${slug}/${videos[0].slug}`
-        );
-
-        let vidRegEx = /<video src="[a-zA-Z\/:\.\-0-9]+/gm;
-        link = vidRegEx.exec(vidReq.data)[0];
-        if (!link) return false;
-
-        return { link: link.replace('<video src="', ""), name: chosen };
-      } catch (error) {
-        message.channel.send(
-          "The `ANIMETHEMES` API seems to be having some problems, please try again later or report to the developers."
-        );
-        message.channel.send(error.message);
-      }
+    async function getVid(user) {
+      let usr = (await axios.get("https://themes.moe/api/anilist/"+user)).data;
+      console.log(usr.length)
+      if (usr.length == 0) return {};
+      let anime = usr[Math.floor(Math.random() * (usr.length - 1))];
+      console.log(anime)
+      let sorted = anime.themes.filter(e=>{
+        return e.themeType.includes("OP")
+      })
+      console.log(sorted)
+      let random = sorted[Math.floor(Math.random() * (sorted.length - 1))];
+      return {name:anime.name,link:random.mirror.mirrorURL}
     }
 
-    /**
-     * Gets link from the JSON list
-     */
-    async function getFromList() {
-      return new Promise(async (resolve, reject) => {
-        if (data.length == 0) return undefined;
-        let chosen = await getItemFromAnilist();
-        console.log("[QUIZ] " + JSON.stringify(chosen));
-
-        if (quizLinks[chosen.english]) {
-          // if found with english
-          let link = quizLinks[chosen.english].filter((v) => v.type == 1); // SETS IF OPENING OR ENDING
-          if (link.length == 0) {
-            // if no openings, try ANITHEMES
-            let newl = await getVid(chosen);
-            resolve(newl);
-          } else resolve({ link: link[0].link, name: chosen });
-        } else if (quizLinks[chosen.romaji]) {
-          // if found with romaji
-          let link = quizLinks[chosen.romaji].filter((v) => v.type == 1); // SETS IF OPENING OR ENDING
-          if (link.length == 0) {
-            let newl = await getVid(chosen);
-            resolve(newl);
-          } else resolve({ link: link[0].link, name: chosen });
-        } else {
-          // else try anithemes
-          let newl = await getVid(chosen);
-          resolve(newl);
-        }
-      });
-    }
-  },
-};
+  }}
