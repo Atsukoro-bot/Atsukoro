@@ -1,5 +1,5 @@
 const axios = require("axios").default;
-let { MessageEmbed } = require("discord.js");
+let { MessageEmbed, ReactionUserManager } = require("discord.js");
 const User = require("../../models/User");
 var ss = require("string-similarity");
 
@@ -90,7 +90,9 @@ module.exports = {
       console.log(usr.length)
       if (usr.length == 0) return {};
       let anime = usr[Math.floor(Math.random() * (usr.length - 1))];
-      console.log(anime)
+      anime = anime.filter(e=>{
+        return e.watchStatus == 2 || e.watchStatus == 1;
+      })
       let sorted = anime.themes.filter(e=>{
         return e.themeType.includes("OP")
       })
