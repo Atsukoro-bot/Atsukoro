@@ -1,5 +1,7 @@
 const axios = require("axios");
-let { MessageEmbed } = require("discord.js");
+let {
+  MessageEmbed
+} = require("discord.js");
 
 const baseUrl = require("../../data/apiLinks.json").anime.baseUrl;
 
@@ -9,6 +11,12 @@ module.exports = {
   perms: [],
   timeout: 5000,
   category: "Anime & Manga",
+  args: [{
+    name: "Name",
+    description: "Name of manga that you want to display!",
+    type: 3,
+    required: true
+  }],
   execute: async function (message, args, commands) {
     if (!args[0])
       return message.channel.send("Please enter a manga name to search! :x:");
@@ -45,23 +53,23 @@ module.exports = {
     };
 
     axios({
-      url: baseUrl,
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-      },
-      data: {
-        query: query,
-        variables: variables,
-      },
-    })
+        url: baseUrl,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+        },
+        data: {
+          query: query,
+          variables: variables,
+        },
+      })
       .then(function (response) {
         response = response.data.data.Media;
         response.chapters =
-          response.chapters == null
-            ? "Probably not finished"
-            : response.chapters;
+          response.chapters == null ?
+          "Probably not finished" :
+          response.chapters;
 
         // Check if anime is for adults
         if (response.isAdult === true)
@@ -71,9 +79,9 @@ module.exports = {
 
         response.description =
           response.description
-            .replace(/<[^>]*>?/gm, "")
-            .replace("&quot;", "")
-            .slice(0, 350) + "...";
+          .replace(/<[^>]*>?/gm, "")
+          .replace("&quot;", "")
+          .slice(0, 350) + "...";
         genres = response.genres.map(function (genre) {
           return " `" + genre + "` ";
         });
@@ -88,14 +96,15 @@ module.exports = {
           )
           .setThumbnail(response.coverImage.medium)
           .setColor("#5865F2")
-          .addFields(
-            {
-              name: "Average Score",
-              value: response.averageScore + "/100",
-              inline: true,
-            },
-            { name: "Chapters", value: `${response.chapters}`, inline: true }
-          );
+          .addFields({
+            name: "Average Score",
+            value: response.averageScore + "/100",
+            inline: true,
+          }, {
+            name: "Chapters",
+            value: `${response.chapters}`,
+            inline: true
+          });
 
         return message.channel.send(embed).catch((err) => {
           return;

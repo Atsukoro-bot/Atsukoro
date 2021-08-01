@@ -1,5 +1,7 @@
 var Quotes = require("anime-quotes-api");
-let { MessageEmbed } = require("discord.js");
+let {
+  MessageEmbed
+} = require("discord.js");
 
 module.exports = {
   name: "quote",

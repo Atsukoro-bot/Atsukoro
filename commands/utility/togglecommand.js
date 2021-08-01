@@ -1,5 +1,7 @@
 const axios = require("axios");
-let { MessageEmbed } = require("discord.js");
+let {
+  MessageEmbed
+} = require("discord.js");
 
 // Guild mongoose model
 const Guild = require("../../models/Guild.js");
@@ -10,16 +12,20 @@ module.exports = {
   name: "togglecommand",
   description: "Turn command on/off",
   perms: [],
+  args: [{
+    name: "Name",
+    description: "A name of the command to toggle",
+    type: 3, //STRING 3, INTEGER 4 viac nájdeš v docs od djs
+    required: true
+  }],
   timeout: 5000,
   category: "Utility",
   execute: async function (message, args, commands) {
     function save(toggledOffCommands) {
       message.guild.toggledOffCommands = toggledOffCommands;
-      Guild.findOneAndUpdate(
-        {
+      Guild.findOneAndUpdate({
           _id: message.guild.id,
-        },
-        {
+        }, {
           $set: {
             toggledOffCommands: toggledOffCommands,
           },
@@ -36,8 +42,7 @@ module.exports = {
     }
 
     async function toggleCommand(command) {
-      Guild.findOne(
-        {
+      Guild.findOne({
           _id: message.guild.id,
         },
         (err, guild) => {

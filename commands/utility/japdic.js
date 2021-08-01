@@ -6,6 +6,14 @@ module.exports = {
   name: "jp",
   description: "Search in the japanese dictionary",
   perms: [],
+  args: [
+    {
+       name: "Word",
+       description: "a word to search in the dictionary",
+       type: 3,
+       required: true
+     }
+   ],
   timeout: 3000,
   category: "Utility",
   execute: async function (message, args, commands) {

@@ -1,5 +1,7 @@
 const axios = require("axios");
-let { MessageEmbed } = require("discord.js");
+let {
+  MessageEmbed
+} = require("discord.js");
 
 const baseUrl = require("../../data/apiLinks.json").anime.baseUrl;
 
@@ -7,6 +9,12 @@ module.exports = {
   name: "user",
   description: "Get specific user!",
   perms: [],
+  args: [{
+    name: "Name",
+    description: "Name of Anilist user that you want to display!",
+    type: 3,
+    required: true
+  }],
   timeout: 5000,
   category: "Anime & Manga",
   execute: async function (message, args, commands) {
@@ -93,17 +101,17 @@ module.exports = {
     };
 
     axios({
-      url: baseUrl,
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-      },
-      data: {
-        query: query,
-        variables: variables,
-      },
-    })
+        url: baseUrl,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+        },
+        data: {
+          query: query,
+          variables: variables,
+        },
+      })
       .then(function (response) {
         response = response.data.data.User;
 
@@ -162,36 +170,35 @@ module.exports = {
           .setColor("#5865F2")
           .setTitle(`📘 ${response.name}'s Overall Stats`, response.siteUrl)
           .setThumbnail(response.avatar.large)
-          .addFields(
-            {
-              name: "Anime",
-              value:
-                "`Episoded watched: " +
-                response.statistics.anime.episodesWatched +
-                "`\n`Watched anime: " +
-                response.statistics.anime.count +
-                "`",
-              inline: true,
-            },
-            {
-              name: "Manga",
-              value:
-                "`Chapters read: " +
-                response.statistics.manga.chaptersRead +
-                "`\n`Manga read: " +
-                response.statistics.manga.count +
-                "`",
-            }
-          )
-          .addFields(
-            { name: "Favourite anime", value: animeString, inline: true },
-            { name: "Favourite manga", value: mangaString, inline: true },
-            {
-              name: "Favourite characters",
-              value: characterString,
-              inline: true,
-            }
-          )
+          .addFields({
+            name: "Anime",
+            value: "`Episoded watched: " +
+              response.statistics.anime.episodesWatched +
+              "`\n`Watched anime: " +
+              response.statistics.anime.count +
+              "`",
+            inline: true,
+          }, {
+            name: "Manga",
+            value: "`Chapters read: " +
+              response.statistics.manga.chaptersRead +
+              "`\n`Manga read: " +
+              response.statistics.manga.count +
+              "`",
+          })
+          .addFields({
+            name: "Favourite anime",
+            value: animeString,
+            inline: true
+          }, {
+            name: "Favourite manga",
+            value: mangaString,
+            inline: true
+          }, {
+            name: "Favourite characters",
+            value: characterString,
+            inline: true,
+          })
           .setFooter(
             `🧍 - Display ${response.name}'s favourite characters\n📚 - Display ${response.name}'s favourite manga\n🎥 - Display ${response.name}'s favourite anime shows`
           );
@@ -203,12 +210,13 @@ module.exports = {
 
           const filter = (reaction, user) => {
             return (
-              user.id === message.author.id &&
-              ["🧍", "📚", "🎥"].includes(reaction.emoji.name)
+              user.id === message.author.id && ["🧍", "📚", "🎥"].includes(reaction.emoji.name)
             );
           };
 
-          const collector = m.createReactionCollector(filter, { time: 120000 });
+          const collector = m.createReactionCollector(filter, {
+            time: 120000
+          });
 
           collector.on("collect", async (reaction, user) => {
             collector.stop();
@@ -233,9 +241,9 @@ module.exports = {
                   .setThumbnail(data.image.large)
                   .setDescription(
                     "**" +
-                      data.name.userPreferred +
-                      "**\n" +
-                      sanitizeHtml(data.description)
+                    data.name.userPreferred +
+                    "**\n" +
+                    sanitizeHtml(data.description)
                   )
                   .setTimestamp()
                   .setColor("#5865F2")
@@ -251,8 +259,7 @@ module.exports = {
 
                   const filter = (reac, use) => {
                     return (
-                      use.id == message.author.id &&
-                      ["⬅️", "➡️"].includes(reac.emoji.name)
+                      use.id == message.author.id && ["⬅️", "➡️"].includes(reac.emoji.name)
                     );
                   };
 
@@ -266,9 +273,9 @@ module.exports = {
                       .setTitle(`${response.name}'s favourite characters`)
                       .setDescription(
                         "**" +
-                          dataC.name.userPreferred +
-                          "**\n" +
-                          sanitizeHtml(dataC.description)
+                        dataC.name.userPreferred +
+                        "**\n" +
+                        sanitizeHtml(dataC.description)
                       )
                       .setTimestamp()
                       .setColor("#5865F2")
@@ -324,27 +331,21 @@ module.exports = {
                       data.description
                     )}`
                   )
-                  .addFields(
-                    {
-                      name: "Chapters",
-                      value:
-                        data.chapters == null ? "No chapters" : data.chapters,
-                      inline: true,
-                    },
-                    {
-                      name: "Volumes",
-                      value: data.volumes == null ? "No volumes" : data.volumes,
-                      inline: true,
-                    },
-                    {
-                      name: "Favourites",
-                      value:
-                        data.favourites == null
-                          ? "No favourites"
-                          : data.favourites,
-                      inline: true,
-                    }
-                  )
+                  .addFields({
+                    name: "Chapters",
+                    value: data.chapters == null ? "No chapters" : data.chapters,
+                    inline: true,
+                  }, {
+                    name: "Volumes",
+                    value: data.volumes == null ? "No volumes" : data.volumes,
+                    inline: true,
+                  }, {
+                    name: "Favourites",
+                    value: data.favourites == null ?
+                      "No favourites" :
+                      data.favourites,
+                    inline: true,
+                  })
                   .setTimestamp()
                   .setColor("#5865F2")
                   .setFooter(
@@ -357,8 +358,7 @@ module.exports = {
 
                   const filter = (reac, use) => {
                     return (
-                      use.id == message.author.id &&
-                      ["⬅️", "➡️"].includes(reac.emoji.name)
+                      use.id == message.author.id && ["⬅️", "➡️"].includes(reac.emoji.name)
                     );
                   };
 
@@ -371,32 +371,25 @@ module.exports = {
                     let newEmbed = new MessageEmbed()
                       .setTitle(`${response.name}'s favourite characters`)
                       .setTimestamp()
-                      .addFields(
-                        {
-                          name: "Chapters",
-                          value:
-                            dataC.chapters == null
-                              ? "No chapters"
-                              : dataC.chapters,
-                          inline: true,
-                        },
-                        {
-                          name: "Volumes",
-                          value:
-                            dataC.volumes == null
-                              ? "No volumes"
-                              : dataC.volumes,
-                          inline: true,
-                        },
-                        {
-                          name: "Favourites",
-                          value:
-                            dataC.favourites == null
-                              ? "No favourites"
-                              : dataC.favourites,
-                          inline: true,
-                        }
-                      )
+                      .addFields({
+                        name: "Chapters",
+                        value: dataC.chapters == null ?
+                          "No chapters" :
+                          dataC.chapters,
+                        inline: true,
+                      }, {
+                        name: "Volumes",
+                        value: dataC.volumes == null ?
+                          "No volumes" :
+                          dataC.volumes,
+                        inline: true,
+                      }, {
+                        name: "Favourites",
+                        value: dataC.favourites == null ?
+                          "No favourites" :
+                          dataC.favourites,
+                        inline: true,
+                      })
                       .setDescription(
                         `**${dataC.title.userPreferred}**\n${sanitizeHtml(
                           dataC.description
@@ -452,30 +445,23 @@ module.exports = {
                       data.description
                     )}`
                   )
-                  .addFields(
-                    {
-                      name: "Average scores",
-                      value:
-                        data.averageScore == null
-                          ? "No average score"
-                          : data.averageScore,
-                      inline: true,
-                    },
-                    {
-                      name: "Episodes",
-                      value:
-                        data.episodes == null ? "No episodes" : data.episodes,
-                      inline: true,
-                    },
-                    {
-                      name: "Favourites",
-                      value:
-                        data.favourites == null
-                          ? "No favourites"
-                          : data.favourites,
-                      inline: true,
-                    }
-                  )
+                  .addFields({
+                    name: "Average scores",
+                    value: data.averageScore == null ?
+                      "No average score" :
+                      data.averageScore,
+                    inline: true,
+                  }, {
+                    name: "Episodes",
+                    value: data.episodes == null ? "No episodes" : data.episodes,
+                    inline: true,
+                  }, {
+                    name: "Favourites",
+                    value: data.favourites == null ?
+                      "No favourites" :
+                      data.favourites,
+                    inline: true,
+                  })
                   .setTimestamp()
                   .setColor("#5865F2")
                   .setFooter(
@@ -488,8 +474,7 @@ module.exports = {
 
                   const filter = (reac, use) => {
                     return (
-                      use.id == message.author.id &&
-                      ["⬅️", "➡️"].includes(reac.emoji.name)
+                      use.id == message.author.id && ["⬅️", "➡️"].includes(reac.emoji.name)
                     );
                   };
 
@@ -502,32 +487,25 @@ module.exports = {
                     let newEmbed = new MessageEmbed()
                       .setTitle(`${response.name}'s favourite characters`)
                       .setTimestamp()
-                      .addFields(
-                        {
-                          name: "Average scores",
-                          value:
-                            dataC.averageScore == null
-                              ? "No average score"
-                              : dataC.averageScore,
-                          inline: true,
-                        },
-                        {
-                          name: "Episodes",
-                          value:
-                            dataC.episodes == null
-                              ? "No episodes"
-                              : dataC.episodes,
-                          inline: true,
-                        },
-                        {
-                          name: "Favourites",
-                          value:
-                            dataC.favourites == null
-                              ? "No favourites"
-                              : dataC.favourites,
-                          inline: true,
-                        }
-                      )
+                      .addFields({
+                        name: "Average scores",
+                        value: dataC.averageScore == null ?
+                          "No average score" :
+                          dataC.averageScore,
+                        inline: true,
+                      }, {
+                        name: "Episodes",
+                        value: dataC.episodes == null ?
+                          "No episodes" :
+                          dataC.episodes,
+                        inline: true,
+                      }, {
+                        name: "Favourites",
+                        value: dataC.favourites == null ?
+                          "No favourites" :
+                          dataC.favourites,
+                        inline: true,
+                      })
                       .setDescription(
                         `**${data.title.userPreferred}**\n${sanitizeHtml(
                           data.description

@@ -9,6 +9,12 @@ module.exports = {
     name: "ratewaifu",
     description: "Rate a waifu!",
     perms: [],
+    args: [{
+        name: "Name",
+        description: "Name of the waifu to search",
+        type: 3,
+        required: true
+    }],
     timeout: 3000,
     category: "Utility",
     execute: async function (message, args, commands) {
@@ -50,13 +56,13 @@ module.exports = {
             var character = response.data.data.Character;
 
             var embed = new MessageEmbed()
-            .setTitle(`${character.name.full}`)
-            .setColor("#5865F2")
-            .setDescription(`I give **${character.name.full}** ${rating}/10 !`)
-            .setThumbnail(character.image.large)
+                .setTitle(`${character.name.full}`)
+                .setColor("#5865F2")
+                .setDescription(`I give **${character.name.full}** ${rating}/10 !`)
+                .setThumbnail(character.image.large)
 
             return message.channel.send(embed);
-            
+
         }).catch(function (error) {
             return message.channel.send(`❗ No character with name ${args[0]} found!`);
         });
