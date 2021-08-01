@@ -1,10 +1,5 @@
-const axios = require("axios");
-let { MessageEmbed } = require("discord.js");
-
 // Guild mongoose model
 const Guild = require("../../models/Guild.js");
-
-const baseUrl = require("../../data/apiLinks.json").anime.baseUrl;
 
 module.exports = {
   name: "prefix",
@@ -12,7 +7,7 @@ module.exports = {
   perms: [],
   timeout: 5000,
   category: "Utility",
-  execute: async function (message, args, commands) {
+  execute: async function (message, args) {
     // Check if user is administator
     if (!message.member.hasPermission("ADMINISTRATOR"))
       return message.channel.send(
@@ -43,7 +38,7 @@ module.exports = {
       .then(() => {
         message.channel.send(`Prefix changed to **${args[0]}** !`);
       })
-      .catch((err) => {
+      .catch(() => {
         message.channel.send("Something went wrong! Please try again later!");
       });
   },

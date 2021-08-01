@@ -9,7 +9,7 @@ module.exports = {
   perms: [],
   timeout: 10000,
   category: "Anime & Manga",
-  execute: async function (message, args, commands, client) {
+  execute: async function (message) {
     var query = `
     query($page: Int, $perPage: Int) {
         Page(page:$page,perPage: $perPage) {
@@ -111,9 +111,9 @@ module.exports = {
 
           const collector = m.createReactionCollector(filter, { time: 120000 });
 
-          collector.on("collect", (reaction, user) => {
+          collector.on("collect", (reaction) => {
             switch (reaction.emoji.name) {
-              case "⬅":
+              case "⬅": {
                 // Get character before
                 if (page == 0) page++;
                 page--;
@@ -121,8 +121,9 @@ module.exports = {
                 const chrBef = getCharacter(page);
                 displayCharacter(chrBef, m);
                 break;
+              }
 
-              case "➡️":
+              case "➡️": {
                 // Get character after
                 if (page > response.length) return;
 
@@ -130,11 +131,13 @@ module.exports = {
                 const chrAft = getCharacter(page);
                 displayCharacter(chrAft, m);
                 break;
+              }
 
-              case "❌":
+              case "❌": {
                 collector.stop();
                 m.reactions.removeAll();
                 break;
+              }
             }
           });
         });

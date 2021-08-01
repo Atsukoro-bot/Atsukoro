@@ -9,7 +9,7 @@ module.exports = {
   perms: [],
   timeout: 1000,
   category: "Anime & Manga",
-  execute: async function (message, args, commands) {
+  execute: async function (message) {
     var query = `query($year:Int,$season:MediaSeason){
       Page(perPage:10){
         media(status:RELEASING,type:ANIME,season:$season,seasonYear:$year,sort:FAVOURITES_DESC){
@@ -54,6 +54,7 @@ module.exports = {
         break;
       case 12:
         vars.season = "WINTER";
+        break;
       default:
         break;
     }

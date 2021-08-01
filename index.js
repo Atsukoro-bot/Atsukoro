@@ -11,7 +11,6 @@ const client = new Client();
 
 // Import mongoose models
 const Guild = require("./models/Guild.js");
-const { default: axios } = require("axios");
 
 // Command collection
 client.commands = new Collection();
@@ -88,7 +87,7 @@ client.on("guildDelete", (guild) => {
 // Do when someone post a message.
 client.on("message", async (message) => {
   // Get guild information
-  let { prefix, toggledOffCommands, lang } = message.guild;
+  let { prefix, toggledOffCommands } = message.guild;
 
   // Check if message author is bot or channel is dms
   if (message.author.bot || message.channel.type == "dm") return;

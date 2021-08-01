@@ -17,7 +17,7 @@ module.exports = {
       required: true,
     },
   ],
-  execute: async function (message, args, commands) {
+  execute: async function (message, args) {
     if (!args[0])
       return message.channel.send(
         "Please enter a character name to search! :x:"
@@ -104,7 +104,7 @@ module.exports = {
 
         return message.channel.send(embed);
       })
-      .catch((err) => {
+      .catch(() => {
         let noFoundEmbed = new MessageEmbed()
           .setColor("RED")
           .setAuthor("No character found!")
