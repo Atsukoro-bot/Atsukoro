@@ -1,7 +1,5 @@
 const axios = require("axios");
-let {
-  MessageEmbed
-} = require("discord.js");
+let { MessageEmbed } = require("discord.js");
 
 const baseUrl = require("../../data/apiLinks.json").anime.baseUrl;
 
@@ -11,12 +9,14 @@ module.exports = {
   perms: [],
   timeout: 5000,
   category: "Anime & Manga",
-  args: [{
-    name: "Name",
-    description: "Name of character from manga or anime to display",
-    type: 3,
-    required: true
-  }],
+  args: [
+    {
+      name: "Name",
+      description: "Name of character from manga or anime to display",
+      type: 3,
+      required: true,
+    },
+  ],
   execute: async function (message, args, commands) {
     if (!args[0])
       return message.channel.send(
@@ -53,25 +53,25 @@ module.exports = {
     };
 
     axios({
-        url: baseUrl,
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json",
-        },
-        data: {
-          query: query,
-          variables: variables,
-        },
-      })
+      url: baseUrl,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      },
+      data: {
+        query: query,
+        variables: variables,
+      },
+    })
       .then(function (response) {
         response = response.data.data.Character;
         response.age = response.age == null ? "Unknown" : response.age;
         response.description =
           response.description
-          .replace(/<[^>]*>?/gm, "")
-          .replace("&quot;", "")
-          .slice(0, 550) + "...";
+            .replace(/<[^>]*>?/gm, "")
+            .replace("&quot;", "")
+            .slice(0, 550) + "...";
 
         let embed = new MessageEmbed()
           .setAuthor(response.name.full)
@@ -84,19 +84,23 @@ module.exports = {
             }**`
           )
           .setThumbnail(response.image.large)
-          .addFields({
-            name: "Age",
-            value: response.age,
-            inline: true
-          }, {
-            name: "Gender",
-            value: response.gender,
-            inline: true
-          }, {
-            name: "Favourites on Anilist",
-            value: response.favourites,
-            inline: true,
-          });
+          .addFields(
+            {
+              name: "Age",
+              value: response.age,
+              inline: true,
+            },
+            {
+              name: "Gender",
+              value: response.gender,
+              inline: true,
+            },
+            {
+              name: "Favourites on Anilist",
+              value: response.favourites,
+              inline: true,
+            }
+          );
 
         return message.channel.send(embed);
       })

@@ -1,19 +1,19 @@
 const axios = require("axios");
-let {
-  MessageEmbed
-} = require("discord.js");
+let { MessageEmbed } = require("discord.js");
 
 const baseUrl = require("../../data/apiLinks.json").anime.baseUrl;
 
 module.exports = {
   name: "anime",
   description: "Get specific anime!",
-  args: [{
-    name: "Anime name",
-    description: "Name of the anime to display",
-    type: 3,
-    required: true
-  }],
+  args: [
+    {
+      name: "Anime name",
+      description: "Name of the anime to display",
+      type: 3,
+      required: true,
+    },
+  ],
   perms: [],
   timeout: 5000,
   category: "Informational",
@@ -61,17 +61,17 @@ module.exports = {
     };
 
     axios({
-        url: baseUrl,
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json",
-        },
-        data: {
-          query: query,
-          variables: variables,
-        },
-      })
+      url: baseUrl,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      },
+      data: {
+        query: query,
+        variables: variables,
+      },
+    })
       .then(function (response) {
         response = response.data.data.Media;
 
@@ -83,9 +83,9 @@ module.exports = {
 
         response.description =
           response.description
-          .replace(/<[^>]*>?/gm, "")
-          .replace("&quot;", "")
-          .slice(0, 1020) + "...";
+            .replace(/<[^>]*>?/gm, "")
+            .replace("&quot;", "")
+            .slice(0, 1020) + "...";
         genres = response.genres.map(function (genre) {
           return " `" + genre + "` ";
         });
@@ -100,19 +100,23 @@ module.exports = {
           )
           .setThumbnail(response.coverImage.large)
           .setColor("#5865F2")
-          .addFields({
-            name: "Average Score",
-            value: response.averageScore + "/100",
-            inline: true,
-          }, {
-            name: "Episodes",
-            value: `${response.episodes} (each ${response.duration} minutes)`,
-            inline: true,
-          }, {
-            name: "Season",
-            value: response.season,
-            inline: true
-          })
+          .addFields(
+            {
+              name: "Average Score",
+              value: response.averageScore + "/100",
+              inline: true,
+            },
+            {
+              name: "Episodes",
+              value: `${response.episodes} (each ${response.duration} minutes)`,
+              inline: true,
+            },
+            {
+              name: "Season",
+              value: response.season,
+              inline: true,
+            }
+          )
           .setFooter("🧍 - Display all characters");
 
         return message.channel
@@ -145,19 +149,24 @@ module.exports = {
                     .setThumbnail(data.image.large)
                     .setColor("#5865F2")
                     .setDescription(sanitizeHtml(data.description))
-                    .addFields({
-                      name: "Gender",
-                      value: data.gender == null ? "Unknown" : data.gender,
-                      inline: true,
-                    }, {
-                      name: "Age",
-                      value: data.age == null ? "Unknown" : data.age,
-                      inline: true,
-                    }, {
-                      name: "Favourites",
-                      value: data.favourites == null ? "Unknown" : data.favourites,
-                      inline: true,
-                    })
+                    .addFields(
+                      {
+                        name: "Gender",
+                        value: data.gender == null ? "Unknown" : data.gender,
+                        inline: true,
+                      },
+                      {
+                        name: "Age",
+                        value: data.age == null ? "Unknown" : data.age,
+                        inline: true,
+                      },
+                      {
+                        name: "Favourites",
+                        value:
+                          data.favourites == null ? "Unknown" : data.favourites,
+                        inline: true,
+                      }
+                    )
                     .setFooter(
                       `page ${page + 1} / ${response.characters.nodes.length}`
                     );
@@ -174,7 +183,8 @@ module.exports = {
 
             const filter = (reaction, user) => {
               return (
-                user.id === message.author.id && ["🧍"].includes(reaction.emoji.name)
+                user.id === message.author.id &&
+                ["🧍"].includes(reaction.emoji.name)
               );
             };
 
@@ -200,19 +210,24 @@ module.exports = {
                     .setThumbnail(data.image.large)
                     .setColor("#5865F2")
                     .setDescription(sanitizeHtml(data.description))
-                    .addFields({
-                      name: "Gender",
-                      value: data.gender == null ? "Unknown" : data.gender,
-                      inline: true,
-                    }, {
-                      name: "Age",
-                      value: data.age == null ? "Unknown" : data.age,
-                      inline: true,
-                    }, {
-                      name: "Favourites",
-                      value: data.favourites == null ? "Unknown" : data.favourites,
-                      inline: true,
-                    })
+                    .addFields(
+                      {
+                        name: "Gender",
+                        value: data.gender == null ? "Unknown" : data.gender,
+                        inline: true,
+                      },
+                      {
+                        name: "Age",
+                        value: data.age == null ? "Unknown" : data.age,
+                        inline: true,
+                      },
+                      {
+                        name: "Favourites",
+                        value:
+                          data.favourites == null ? "Unknown" : data.favourites,
+                        inline: true,
+                      }
+                    )
                     .setFooter(
                       `page ${page + 1} / ${response.characters.nodes.length}`
                     );
@@ -225,13 +240,15 @@ module.exports = {
 
                     pageFilter = (reaction, user) => {
                       return (
-                        user.id === message.author.id && ["⬅️", "➡️"].includes(reaction.emoji.name)
+                        user.id === message.author.id &&
+                        ["⬅️", "➡️"].includes(reaction.emoji.name)
                       );
                     };
 
                     const pageCollector = m.createReactionCollector(
-                      pageFilter, {
-                        time: 120000
+                      pageFilter,
+                      {
+                        time: 120000,
                       }
                     );
 

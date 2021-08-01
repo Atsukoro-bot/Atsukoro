@@ -1,7 +1,5 @@
 const axios = require("axios").default;
-let {
-  MessageEmbed
-} = require("discord.js");
+let { MessageEmbed } = require("discord.js");
 
 const baseurl = require("../../data/apiLinks.json").image.baseUrl;
 
@@ -10,12 +8,14 @@ module.exports = {
   description: "Kanna",
   perms: [],
   timeout: 3000,
-  args: [{
-    name: "Text",
-    description: "Text to display in Kanna canvas",
-    type: 3, //STRING 3, INTEGER 4 viac nájdeš v docs od djs
-    required: true
-  }],
+  args: [
+    {
+      name: "Text",
+      description: "Text to display in Kanna canvas",
+      type: 3, //STRING 3, INTEGER 4 viac nájdeš v docs od djs
+      required: true,
+    },
+  ],
   category: "Image Generation",
   execute: async function (message, args, commands) {
     if (!args[0]) return;
@@ -24,10 +24,10 @@ module.exports = {
         method: "GET",
         url: baseurl + `?type=kannagen`,
         params: {
-          text: args.join(" ")
+          text: args.join(" "),
         },
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
       })
     ).data;

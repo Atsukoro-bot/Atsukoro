@@ -1,7 +1,5 @@
 const axios = require("axios");
-let {
-  MessageEmbed
-} = require("discord.js");
+let { MessageEmbed } = require("discord.js");
 
 const baseUrl = require("../../data/apiLinks.json").anime.baseUrl;
 
@@ -10,12 +8,14 @@ module.exports = {
   description: "Get information about specific stuidio!",
   perms: [],
   timeout: 5000,
-  args: [{
-    name: "Name",
-    description: "Name of studio that you want to display",
-    type: 3, //STRING 3, INTEGER 4 viac nájdeš v docs od djs
-    required: true
-  }],
+  args: [
+    {
+      name: "Name",
+      description: "Name of studio that you want to display",
+      type: 3, //STRING 3, INTEGER 4 viac nájdeš v docs od djs
+      required: true,
+    },
+  ],
   category: "Anime & Manga",
   execute: async function (message, args, commands) {
     if (!args[0])
@@ -52,17 +52,17 @@ module.exports = {
     };
 
     axios({
-        url: baseUrl,
-        method: "POST",
-        data: {
-          query: query,
-          variables: variables,
-        },
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json",
-        },
-      })
+      url: baseUrl,
+      method: "POST",
+      data: {
+        query: query,
+        variables: variables,
+      },
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      },
+    })
       .then((results) => {
         let result = results.data.data.Studio;
 
@@ -70,15 +70,18 @@ module.exports = {
           .setTitle(result.name)
           .setURL(result.siteUrl)
           .setColor("#5865F2")
-          .addFields({
-            name: "Favourites",
-            value: result.favourites,
-            inline: true
-          }, {
-            name: "Is animation studio",
-            value: result.isAnimationStudio == true ? "Yes" : "No",
-            inline: true,
-          })
+          .addFields(
+            {
+              name: "Favourites",
+              value: result.favourites,
+              inline: true,
+            },
+            {
+              name: "Is animation studio",
+              value: result.isAnimationStudio == true ? "Yes" : "No",
+              inline: true,
+            }
+          )
           .setFooter("🎥 - Display work that is done by this studio");
 
         return message.channel.send(embed).then((m) => {
@@ -136,7 +139,8 @@ module.exports = {
 
               const pageFilter = (reaction, user) => {
                 return (
-                  user.id == message.author.id && ["⬅", "➡️"].includes(reaction.emoji.name)
+                  user.id == message.author.id &&
+                  ["⬅", "➡️"].includes(reaction.emoji.name)
                 );
               };
 

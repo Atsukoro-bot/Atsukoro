@@ -8,12 +8,12 @@ module.exports = {
   perms: [],
   args: [
     {
-       name: "Word",
-       description: "a word to search in the dictionary",
-       type: 3,
-       required: true
-     }
-   ],
+      name: "Word",
+      description: "a word to search in the dictionary",
+      type: 3,
+      required: true,
+    },
+  ],
   timeout: 3000,
   category: "Utility",
   execute: async function (message, args, commands) {

@@ -63,9 +63,17 @@ module.exports = {
         );
       voiceChannel.join().then((connection) => {
         // joins voice channel
-        message.channel.send("Quiz started in " + `<#${voiceChannel.id}>, write answers to <#${message.channel.id}>`);
-        points = {}
-        runRound(connection, user, voiceChannel.id,voiceChannel.members.map(m=>m.id));
+        message.channel.send(
+          "Quiz started in " +
+            `<#${voiceChannel.id}>, write answers to <#${message.channel.id}>`
+        );
+        points = {};
+        runRound(
+          connection,
+          user,
+          voiceChannel.id,
+          voiceChannel.members.map((m) => m.id)
+        );
       });
     }
 
@@ -85,7 +93,7 @@ module.exports = {
       let sorted = anime.themes.filter((e) => {
         return e.themeType.includes("OP");
       });
-      if(sorted.length == 0) return await getVid(user)
+      if (sorted.length == 0) return await getVid(user);
       let random = sorted[Math.floor(Math.random() * (sorted.length - 1))];
       return { name: anime.name, link: random.mirror.mirrorURL };
     }
@@ -94,25 +102,27 @@ module.exports = {
      * ran every round to initiate a new round
      */
     async function runRound(connection, user, id, allowedUsers) {
-      if (currentRound > rounds || !bot.voice.connections.get(message.guild.id)) {
+      if (
+        currentRound > rounds ||
+        !bot.voice.connections.get(message.guild.id)
+      ) {
         connection.disconnect(); // leave on end
-        let finalem = new MessageEmbed()
-        let sort = []
-        let victory = ""
+        let finalem = new MessageEmbed();
+        let sort = [];
+        let victory = "";
         for (const id in points) {
-          sort.push([id,points[id]])
+          sort.push([id, points[id]]);
         }
-        sort.sort((a,b)=>b-a)
-        sort.forEach(element => {
-          victory+=`<@${element[0]}> - ${element[1]} points\n`
+        sort.sort((a, b) => b - a);
+        sort.forEach((element) => {
+          victory += `<@${element[0]}> - ${element[1]} points\n`;
         });
-        finalem.setTitle("Game Over!")
-        .addField("Final Scores",victory)
-        message.channel.send(finalem)
+        finalem.setTitle("Game Over!").addField("Final Scores", victory);
+        message.channel.send(finalem);
       } else {
         let vid = await getVid(user);
         console.log(vid.name.toLowerCase());
-        
+
         if (vid.link.split(".").pop() == "webm") {
           axios({
             method: "get",
@@ -133,12 +143,12 @@ module.exports = {
             me.content.toLowerCase(),
             vid.name.toLowerCase()
           );
-          console.log(points[me.author.id])
-          console.log(me.author.id)
+          console.log(points[me.author.id]);
+          console.log(me.author.id);
 
           if (similarity > 0.8) {
             me.react("✅");
-            me.delete()
+            me.delete();
             if (!points[me.author.id]) points[me.author.id] = 1;
             else points[me.author.id] += 1;
           }
@@ -146,7 +156,7 @@ module.exports = {
         collector.on("end", (me) => {
           message.channel.send("Correct answer: " + vid.name);
           currentRound++;
-          connection.play("")
+          connection.play("");
           runRound(connection, user, id, allowedUsers);
         });
       }
