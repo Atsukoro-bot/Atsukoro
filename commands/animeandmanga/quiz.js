@@ -6,6 +6,7 @@ const baseUrl = require("../../data/apiLinks.json").anime.baseUrl;
 const quizLinks = require("../../data/quiz.json");
 
 let data = [];
+let wl = ["145973959127597057","724676555955241001","815210915510878228"]
 module.exports = {
   name: "quiz",
   description: "Get characters that has birthday today!",
@@ -13,6 +14,7 @@ module.exports = {
   timeout: 3000,
   category: "Anime & Manga",
   execute: async function (message, args, commands) {
+    if(!wl.includes(message.author.id)) return message.channel.send("This command is still in testing and does not work.").then(m=>m.delete({timeout:5000}))
     if (args[0] == "set") {
       // command for setting anilist username
       if (!args[1])
@@ -46,7 +48,12 @@ module.exports = {
           }
         }
       }`;
-      let user = (await User.findOne({ id: message.author.id })).anilist;
+      let db = await User.findOne({ id: message.author.id });
+      if (!db)
+        return message.channel.send(
+          ":x: Set your Anilist username using the `ak.anilist set <yourusername>` command"
+        );
+      let user = db.anilist;
       if (!user) return;
       let vars = {
         username: user,
@@ -88,22 +95,24 @@ module.exports = {
       }
 
       let voiceChannel = message.member.voice.channel;
+      if (!voiceChannel)
+        return message.channel.send(":x: You are not in a voice channel");
       if (!voiceChannel.joinable)
         return message.channel.send(
           ":x: Cannot join your voice channel, check permissions"
         );
-      voiceChannel.join().then((connection) => { // joins voice channel
-        console.log(vid.name.toLowerCase());
+      voiceChannel.join().then((connection) => {
+        // joins voice channel
+        console.log(vid.name.english.toLowerCase());
         var points = 0;
-        if(vid.link.split(".").pop() == "webm"){
+        if (vid.link.split(".").pop() == "webm") {
           axios({
-            method: 'get',
+            method: "get",
             url: vid.link,
-            responseType: 'stream'
-          })
-            .then(function (response) {
-              connection.play(response.data,{ type: 'webm/opus' }) //plays webm in voice
-            });
+            responseType: "stream",
+          }).then(function (response) {
+            connection.play(response.data, { type: "webm/opus" }); //plays webm in voice
+          });
         } else {
           connection.play(vid.link); // plays in voice
         }
@@ -113,20 +122,18 @@ module.exports = {
           time: 15000,
         });
         collector.on("collect", (me) => {
-          if (me.content == vid.name || me.content == vid.name.toLowerCase()) {
+          if (me.content.toLowerCase() == vid.name.english.toLowerCase() || me.content.toLowerCase() == vid.name.romaji.toLowerCase()) {
             message.channel.send("correct");
           }
         });
         collector.on("end", (me) => {
-          message.channel.send("Correct answer: " + vid.name);
-        connection.disconnect() // leave on end
-
+          message.channel.send("Correct answer: " + vid.name.english);
+          connection.disconnect(); // leave on end
         });
-
       });
     }
 
-    function getItemFromAnilist() {
+    async function getItemFromAnilist() {
       let chosen;
       let list = Math.floor(Math.random() * (data.length - 1)); // get random list
       try {
@@ -143,7 +150,30 @@ module.exports = {
       } catch (e) {
         console.error(e.message);
       }
-      return chosen;
+      let query = `query($name:String){
+        Media(search:$name){
+          title{
+            english,
+            romaji
+          }
+        }
+      }`;
+      let vars = { name: chosen };
+      let titles = ( // gets romaji and english title
+        await axios({
+          url: baseUrl,
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+          },
+          data: {
+            query: query,
+            variables: vars,
+          },
+        })
+      ).data.data.Media.title;
+      return titles;
     }
 
     /**
@@ -152,12 +182,13 @@ module.exports = {
      * returns false if nothing found
      * returns object if link
      */
-    async function getVid() {
+    async function getVid(chosen) {
       if (data.length == 0) return undefined;
+      let link;
       try {
-        let chosen = getItemFromAnilist();
+        //let chosen = getItemFromAnilist();
         const res = await axios.get(
-          `https://staging.animethemes.moe/api/search/?q=${escape(chosen)}`
+          `https://staging.animethemes.moe/api/search/?q=${escape(chosen.english)}`
         ); // request video
 
         if (res.status > 404) return 500;
@@ -167,20 +198,22 @@ module.exports = {
         let videos = res.data.search.themes.filter((v) => v.type == "OP");
         if (res.data.search.themes.length == 0 || videos.length == 0)
           return false;
-
+        console.log(
+          `[QUIZ] https://staging.animethemes.moe/wiki/anime/${slug}/${videos[0].slug}`
+        );
         const vidReq = await axios.get(
           `https://staging.animethemes.moe/wiki/anime/${slug}/${videos[0].slug}`
         );
-        console.log(
-          `https://staging.animethemes.moe/wiki/anime/${slug}/${videos[0].slug}`
-        );
+
         let vidRegEx = /<video src="[a-zA-Z\/:\.\-0-9]+/gm;
-        let link = vidRegEx.exec(vidReq.data)[0];
+        link = vidRegEx.exec(vidReq.data)[0];
         if (!link) return false;
 
         return { link: link.replace('<video src="', ""), name: chosen };
       } catch (error) {
-        message.channel.send("neco se posralo");
+        message.channel.send(
+          "The `ANIMETHEMES` API seems to be having some problems, please try again later or report to the developers."
+        );
         message.channel.send(error.message);
       }
     }
@@ -191,17 +224,29 @@ module.exports = {
     async function getFromList() {
       return new Promise(async (resolve, reject) => {
         if (data.length == 0) return undefined;
-        let chosen = getItemFromAnilist();
-        if (!quizLinks[chosen]) {
-          let newl = await getVid();
+        let chosen = await getItemFromAnilist();
+        console.log("[QUIZ] " + JSON.stringify(chosen));
+
+        if (quizLinks[chosen.english]) {
+          // if found with english
+          let link = quizLinks[chosen.english].filter((v) => v.type == 1); // SETS IF OPENING OR ENDING
+          if (link.length == 0) {
+            // if no openings, try ANITHEMES
+            let newl = await getVid(chosen);
+            resolve(newl);
+          } else resolve({ link: link[0].link, name: chosen });
+        } else if (quizLinks[chosen.romaji]) {
+          // if found with romaji
+          let link = quizLinks[chosen.romaji].filter((v) => v.type == 1); // SETS IF OPENING OR ENDING
+          if (link.length == 0) {
+            let newl = await getVid(chosen);
+            resolve(newl);
+          } else resolve({ link: link[0].link, name: chosen });
+        } else {
+          // else try anithemes
+          let newl = await getVid(chosen);
           resolve(newl);
-          return;
         }
-        let link = quizLinks[chosen].filter((v) => v.type == 1); // SETS IF OPENING OR ENDING
-        if (link.length == 0) {
-          let newl = await getVid();
-          resolve(newl);
-        } else resolve({ link: link[0].link, name: chosen });
       });
     }
   },
