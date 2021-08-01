@@ -1,5 +1,4 @@
 const axios = require("axios");
-let { MessageEmbed } = require("discord.js");
 const Discord = require("discord.js");
 
 module.exports = {
@@ -16,7 +15,7 @@ module.exports = {
   ],
   timeout: 3000,
   category: "Utility",
-  execute: async function (message, args, commands) {
+  execute: async function (message, args) {
     if (args.join(" ").length > 254) return;
     let p = 0;
     axios
@@ -94,7 +93,7 @@ module.exports = {
           let collector = m.createReactionCollector(filter, {
             time: 120000,
           });
-          collector.on("end", (c) => {
+          collector.on("end", () => {
             m.reactions.removeAll();
           });
           collector.on("collect", (reaction) => {

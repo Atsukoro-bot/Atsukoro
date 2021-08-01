@@ -3,6 +3,8 @@
 </div>
 <h1 align="center">Atsukoro Discord bot</h1>
 
+[![CodeFactor](https://www.codefactor.io/repository/github/atsukoro-bot/atsukoro/badge)](https://www.codefactor.io/repository/github/atsukoro-bot/atsukoro)
+
 To develop locally, clone this repository and run the following command to start the local dev server:
 
 ```bash

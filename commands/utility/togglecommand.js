@@ -1,10 +1,6 @@
-const axios = require("axios");
-let { MessageEmbed } = require("discord.js");
-
 // Guild mongoose model
 const Guild = require("../../models/Guild.js");
 
-const baseUrl = require("../../data/apiLinks.json").anime.baseUrl;
 
 module.exports = {
   name: "togglecommand",
@@ -32,7 +28,7 @@ module.exports = {
             toggledOffCommands: toggledOffCommands,
           },
         },
-        (err, guild) => {
+        (err) => {
           if (err)
             return message.channel.send(
               "Something went wrong, contact administrator :x:"

@@ -17,7 +17,7 @@ module.exports = {
   ],
   timeout: 3000,
   category: "Utility",
-  execute: async function (message, args, commands) {
+  execute: async function (message, args) {
     if (!args[0])
       return message.channel.send("❗ Please specify a name of waifu to rate");
 
@@ -63,7 +63,7 @@ module.exports = {
 
         return message.channel.send(embed);
       })
-      .catch(function (error) {
+      .catch(function () {
         return message.channel.send(
           `❗ No character with name ${args[0]} found!`
         );

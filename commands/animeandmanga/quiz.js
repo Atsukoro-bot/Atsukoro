@@ -1,11 +1,8 @@
 const axios = require("axios").default;
-let { MessageEmbed, ReactionUserManager } = require("discord.js");
+let { MessageEmbed } = require("discord.js");
 const User = require("../../models/User");
 var ss = require("string-similarity");
 
-const baseUrl = require("../../data/apiLinks.json").anime.baseUrl;
-
-let data = [];
 let wl = ["145973959127597057", "724676555955241001", "815210915510878228"];
 module.exports = {
   name: "quiz",
@@ -31,7 +28,7 @@ module.exports = {
         { id: message.author.id },
         { anilist: args[1], id: message.author.id },
         { upsert: true }
-      ).then((u) => {
+      ).then(() => {
         message.channel.send("✅ Updated Anilist profile");
       });
       // end anilist username
@@ -153,7 +150,7 @@ module.exports = {
             else points[me.author.id] += 1;
           }
         });
-        collector.on("end", (me) => {
+        collector.on("end", () => {
           message.channel.send("Correct answer: " + vid.name);
           currentRound++;
           connection.play("");

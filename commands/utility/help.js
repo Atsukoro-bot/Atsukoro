@@ -9,7 +9,7 @@ module.exports = {
   category: "Utility",
   execute: async function (message, args, commands) {
     let comms = {};
-    commands.forEach((value, key) => {
+    commands.forEach((value) => {
       if (!comms[value.category]) {
         comms[value.category] = [value.name];
       } else {

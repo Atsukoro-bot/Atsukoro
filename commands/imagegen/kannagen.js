@@ -17,7 +17,7 @@ module.exports = {
     },
   ],
   category: "Image Generation",
-  execute: async function (message, args, commands) {
+  execute: async function (message, args) {
     if (!args[0]) return;
     let res = (
       await axios({
