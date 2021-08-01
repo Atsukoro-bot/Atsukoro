@@ -17,7 +17,7 @@ module.exports = {
     },
   ],
   category: "Anime & Manga",
-  execute: async function (message, args, commands) {
+  execute: async function (message, args) {
     if (!args[0])
       return message.channel.send("Please enter a studio name to search! :x:");
 
@@ -118,13 +118,13 @@ module.exports = {
             max: 1,
           });
 
-          mainCollector.on("collect", async (reaction, user) => {
+          mainCollector.on("collect", async () => {
             mainCollector.stop();
             await m.reactions.removeAll();
 
             let page = 0;
 
-            data = getMedia(page);
+            let data = getMedia(page);
 
             let mediaEmbed = new MessageEmbed()
               .setTimestamp()
@@ -148,23 +148,25 @@ module.exports = {
                 time: 60000,
               });
 
-              pageCollector.on("collect", (reaction, user) => {
+              pageCollector.on("collect", (reaction) => {
                 switch (reaction.emoji.name) {
-                  case "⬅":
+                  case "⬅": {
                     if (page == 0) page = result.media.nodes.length - 1;
                     page--;
-                    data = getMedia(page);
+                    let data = getMedia(page);
 
                     editEmbed(m, data);
                     break;
+                  }
 
-                  case "➡️":
+                  case "➡️": {
                     if (page + 1 == result.media.nodes.length) page = -1;
                     page++;
-                    data = getMedia(page);
+                    let data = getMedia(page);
 
                     editEmbed(m, data);
                     break;
+                  }
                 }
               });
             });

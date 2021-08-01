@@ -1,7 +1,6 @@
 // Guild mongoose model
 const Guild = require("../../models/Guild.js");
 
-
 module.exports = {
   name: "togglecommand",
   description: "Turn command on/off",
