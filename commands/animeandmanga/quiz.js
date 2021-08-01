@@ -89,10 +89,10 @@ module.exports = {
       let usr = (await axios.get("https://themes.moe/api/anilist/"+user)).data;
       console.log(usr.length)
       if (usr.length == 0) return {};
-      let anime = usr[Math.floor(Math.random() * (usr.length - 1))];
-      anime = anime.filter(e=>{
+      usr = usr.filter(e=>{
         return e.watchStatus == 2 || e.watchStatus == 1;
       })
+      let anime = usr[Math.floor(Math.random() * (usr.length - 1))];
       let sorted = anime.themes.filter(e=>{
         return e.themeType.includes("OP")
       })
