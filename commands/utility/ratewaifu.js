@@ -49,8 +49,6 @@ module.exports = {
 
             var character = response.data.data.Character;
 
-            if (!character) return message.channel.send(`❗ No character with name ${args[0]} found!`);
-
             var embed = new MessageEmbed()
             .setTitle(`${character.name.full}`)
             .setColor("#5865F2")
@@ -60,7 +58,7 @@ module.exports = {
             return message.channel.send(embed);
             
         }).catch(function (error) {
-            console.log(error);
+            return message.channel.send(`❗ No character with name ${args[0]} found!`);
         });
     },
 };
